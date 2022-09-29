@@ -1,0 +1,33 @@
+{
+	"compilerOptions": {
+		"module": "esnext",
+		"lib": [
+			"dom",
+			"esnext"
+		],
+		"importHelpers": true,
+		"declaration": true,
+		"sourceMap": true,
+		"strict": true,
+		"noUnusedLocals": false,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"jsx": "react"
+	},
+	"include": [
+		"./src/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"**__tests__",
+		"**/*test",
+		"src/__tests__",
+		"**src/__tests__",
+		"src/**/*.test.ts",
+		"__tests__",
+	]
+}

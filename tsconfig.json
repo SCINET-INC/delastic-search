@@ -1,0 +1,40 @@
+{
+	"include": [
+		"./src/**/*"
+	],
+	"extends": "./tsconfig.build.json",
+	"types": [
+		"node",
+		"jest"
+	],
+	"typeRoots": [
+		"./types",
+		"node_modules/@types"
+	],
+	"compilerOptions": {
+		"target": "es6",
+		"allowJs": false,
+		"baseUrl": ".",
+		"typeRoots": [
+			"./node_modules/@types",
+		],
+		"rootDir": "./src",
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"jsx": "react",
+		"types": [
+			"jest"
+		]
+	},
+	"exclude": [
+		"node_modules",
+		"**__tests__",
+		"**/*test",
+		"src/__tests__",
+		"**src/__tests__",
+		"src/**/*.test.ts",
+		"src/declarations"
+	]
+}

@@ -1,0 +1,45 @@
+name: "Delastic Search Integration"
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@scinet-inc"
+      - name: "Install IC Replica"
+        run: ./scripts/install-replica.sh
+      - uses: aviate-labs/setup-dfx@v0.2.3
+        with:
+          vessel-version: 0.6.3
+          dfx-version: 0.11.0
+        env:
+          DFX_IDENTITY_PEM: ${{ secrets.DFX_IDENTITY_PEM }}
+      - name: Install dependencies
+        run: yarn
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Prepare Scripts
+        run: yarn prepare-scripts
+      - name: Install Vessel
+        run: yarn install-vessel
+      - name: Create Replica
+        run: dfx start --background
+      - name: Create Canisters
+        run: dfx canister create delastic_search
+      - name: Build canisters
+        run: dfx build
+      - name: Generate
+        run: yarn generate
+      - name: Build
+        run: yarn build

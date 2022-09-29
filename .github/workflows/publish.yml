@@ -1,0 +1,61 @@
+name: Post-merge Build and Publish
+on:
+  push:
+    branches:
+      - main
+jobs:
+  BuildTestAndPublish:
+    name: Typecheck, Test, and Publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check Out Files
+        uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@scinet-inc"
+      - name: Use Yarn Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Install semantic-release extra plugins
+        run: yarn add --dev @semantic-release/changelog @semantic-release/git
+      - name: Prepare Scripts
+        run: yarn prepare-scripts
+      - name: "Install IC Replica"
+        run: ./scripts/install-replica.sh
+      - uses: aviate-labs/setup-dfx@v0.2.3
+        with:
+          vessel-version: 0.6.3
+          dfx-version: 0.11.0
+        env:
+          DFX_IDENTITY_PEM: ${{ secrets.DFX_IDENTITY_PEM }}
+      - name: Install Vessel
+        run: yarn install-vessel
+      - name: Create Replica
+        run: dfx start --background
+      - name: Create Canisters
+        run: dfx canister create delastic_search
+      - name: Build canisters
+        run: dfx build
+      - name: Generate
+        run: yarn generate
+      - name: Build
+        run: yarn build
+      - name: git config
+        run: |
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git config user.name "${GITHUB_ACTOR}"
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release

@@ -1,0 +1,30 @@
+type Result = 
+ variant {
+   err: Error;
+   ok: vec Record;
+ };
+type RecordAttributes = 
+ vec record {
+       text;
+       variant {"text": opt text;};
+     };
+type Record = 
+ record {
+   attributes: RecordAttributes;
+   entityType: text;
+   id: text;
+ };
+type Error = 
+ variant {
+   AlreadyExists;
+   BadRequest;
+   Forbidden;
+   InternalError;
+   NotAuthorized;
+   NotFound;
+ };
+service : {
+  addRecord: (Record, vec text, vec text) -> ();
+  queryIndex: (text, text) -> (Result) query;
+  removeRecord: (text, vec text) -> ();
+}

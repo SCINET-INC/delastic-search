@@ -1,0 +1,64 @@
+{
+  "name": "@scinet-inc/delastic-search",
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": "https://github.com/SCINET-INC/delastic-search",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "commit-lint": "commitlint -E HUSKY_GIT_PARAMS",
+    "format": "pretty-quick --staged",
+    "generate": "dfx generate && node ./scripts/generate.js",
+    "prepare": "husky install && chmod ug+x .husky/*",
+    "prepare-scripts": "chmod ug+x scripts/*",
+    "publish-package": "yarn generate && yarn build && npm publish",
+    "reinstall-canisters": "./scripts/reinstall-canisters.sh",
+    "restart-dfx": "./scripts/restart-and-deploy.sh",
+    "install-vessel": "./scripts/install-vessel.sh",
+    "install-dfx": "sh -ci '$(curl -fsSL https://smartcontracts.org/install.sh)'"
+  },
+  "dependencies": {
+    "@dfinity/agent": "^0.13.3",
+    "@dfinity/candid": "^0.13.3",
+    "@dfinity/principal": "^0.13.3"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^16.2.1",
+    "@commitlint/config-conventional": "^16.2.1",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^8.0.4",
+    "@semantic-release/npm": "^9.0.1",
+    "@semantic-release/release-notes-generator": "^10.0.3",
+    "@types/node": "^17.0.33",
+    "conventional-changelog-cli": "^2.2.2",
+    "husky": "^7.0.0",
+    "prettier": "^2.4.1",
+    "pretty-quick": "^3.1.2",
+    "semantic-release": "^19.0.3",
+    "tsdx": "^0.14.1",
+    "typescript": "4.4.3"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/git",
+      "@semantic-release/github"
+    ],
+    "preset": "conventionalcommits",
+    "private": "false"
+  }
+}
