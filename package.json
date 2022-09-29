@@ -10,7 +10,8 @@
     "src"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com",
+    "tag": "latest"
   },
   "scripts": {
     "build": "tsdx build --tsconfig tsconfig.build.json",
