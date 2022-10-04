@@ -14,9 +14,9 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "16.x"
-          registry-url: "https://npm.pkg.github.com"
-          scope: "@scinet-inc"
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@scinet-inc'
       - name: Use Yarn Cache
         uses: actions/cache@v2
         with:
@@ -30,7 +30,7 @@ jobs:
         run: yarn add --dev @semantic-release/changelog @semantic-release/git
       - name: Prepare Scripts
         run: yarn prepare-scripts
-      - name: "Install IC Replica"
+      - name: 'Install IC Replica'
         run: ./scripts/install-replica.sh
       - uses: aviate-labs/setup-dfx@v0.2.3
         with:
@@ -43,20 +43,14 @@ jobs:
       - name: Create Replica
         run: dfx start --background
       - name: Create Canisters
-        run: dfx canister create delastic_search
+        run: dfx canister create --all
       - name: Build canisters
         run: dfx build
       - name: Generate
         run: yarn generate
       - name: Build
         run: yarn build
-      - name: git config
-        run: |
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git config user.name "${GITHUB_ACTOR}"
-      # Version & Publish
-      - run: yarn semantic-release
+      - name: Publish
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
