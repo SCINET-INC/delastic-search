@@ -1,4 +1,4 @@
-import { Actor, HttpAgent } from "@dfinity/agent";
+import { Actor, HttpAgent } from '@dfinity/agent';
 
 // Imports and re-exports candid interface
 import { idlFactory } from './delastic_search.did.js';
@@ -7,18 +7,20 @@ export { idlFactory } from './delastic_search.did.js';
 export const canisterId = process.env.DELASTIC_SEARCH_CANISTER_ID;
 
 /**
- * 
+ *
  * @param {string | import("@dfinity/principal").Principal} canisterId Canister ID of Agent
  * @param {{agentOptions?: import("@dfinity/agent").HttpAgentOptions; actorOptions?: import("@dfinity/agent").ActorConfig}} [options]
  * @return {import("@dfinity/agent").ActorSubclass<import("./delastic_search.did.js")._SERVICE>}
  */
- export const createActor = (canisterId, options) => {
+export const createActor = (canisterId, options) => {
   const agent = new HttpAgent({ ...options?.agentOptions });
-  
+
   // Fetch root key for certificate validation during development
-  if(process.env.NODE_ENV !== "production") {
-    agent.fetchRootKey().catch(err=>{
-      console.warn("Unable to fetch root key. Check to ensure that your local replica is running");
+  if (process.env.NODE_ENV !== 'production') {
+    agent.fetchRootKey().catch((err) => {
+      console.warn(
+        'Unable to fetch root key. Check to ensure that your local replica is running',
+      );
       console.error(err);
     });
   }
@@ -30,9 +32,9 @@ export const canisterId = process.env.DELASTIC_SEARCH_CANISTER_ID;
     ...options?.actorOptions,
   });
 };
-  
+
 /**
  * A ready-to-use agent for the delastic_search canister
  * @type {import("@dfinity/agent").ActorSubclass<import("./delastic_search.did.js")._SERVICE>}
  */
- export const delastic_search = createActor(canisterId);
+export const delastic_search = createActor(canisterId);

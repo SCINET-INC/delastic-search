@@ -13,5 +13,5 @@ export const delastic_search = {
       agent ?? new HttpAgent(),
       idlFactory,
     );
-  }
-}
+  },
+};

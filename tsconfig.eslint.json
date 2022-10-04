@@ -1,0 +1,11 @@
+{
+	"include": [
+		".eslintrc.js",
+		"**/src"
+	],
+	"compilerOptions": {
+		"module": "commonjs",
+		"outDir": "lib",
+		"strict": true
+	}
+}

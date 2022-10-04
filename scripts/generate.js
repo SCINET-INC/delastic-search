@@ -1,9 +1,9 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 (async () => {
   const clientNames = await fs.promises.readdir(
-    path.resolve("src/declarations")
+    path.resolve('src/declarations'),
   );
   await createTypes(clientNames);
   await createClients(clientNames);
@@ -11,10 +11,10 @@ const path = require("path");
 })();
 
 const createIndex = async (names) => {
-  const index = names.map((name) => formatName(name)).join("");
+  const index = names.map((name) => formatName(name)).join('');
   await fs.promises.writeFile(
-    path.resolve("src", "clients", "index.ts"),
-    index
+    path.resolve('src', 'clients', 'index.ts'),
+    index,
   );
 };
 
@@ -27,19 +27,19 @@ const createClients = async (names) => {
     names.map(async (name) => {
       const client = await createClient(name);
       return fs.promises.writeFile(
-        path.resolve("src", "clients", `${name}.ts`),
-        client
+        path.resolve('src', 'clients', `${name}.ts`),
+        client,
       );
-    })
+    }),
   );
 };
 
 const createClient = async (name) => {
   const client = await fs.promises.readFile(
-    path.resolve("scripts", "resources", "client.ts"),
-    "utf8"
+    path.resolve('scripts', 'resources', 'client.ts'),
+    'utf8',
   );
-  return client.replaceAll("CLIENT_NAME", name);
+  return client.replaceAll('CLIENT_NAME', name);
 };
 
 const formatTypeName = (filename) => {
@@ -52,16 +52,16 @@ const createTypes = async (names) => {
       return fs.copyFile(
         `src/declarations/${name}/${name}.did.d.ts`,
         `src/types/${name}.ts`,
-        () => console.log(`${name} complete`)
+        () => console.log(`${name} complete`),
       );
-    })
+    }),
   );
   // const index = names.map((name) => formatTypeName(name)).join('');
 
   const index = names
     .map((name) => formatTypeName(name))
-    .join("")
+    .join('')
     .concat(`export {${names.map((name) => `${name}_types`)}};\n`);
 
-  await fs.promises.writeFile(path.resolve("src", "types", "index.ts"), index);
+  await fs.promises.writeFile(path.resolve('src', 'types', 'index.ts'), index);
 };
