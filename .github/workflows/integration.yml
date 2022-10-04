@@ -36,7 +36,7 @@ jobs:
       - name: Create Replica
         run: dfx start --background
       - name: Create Canisters
-        run: dfx canister create delastic_search
+        run: dfx canister create --all
       - name: Build canisters
         run: dfx build
       - name: Generate
