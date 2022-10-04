@@ -2,6 +2,9 @@
   "canisters": {
     "delastic_search": {
       "main": "src/canisters/delastic_search.mo"
+    },
+    "delastic_search_imp": {
+      "main": "src/canisters/de_implementation.mo"
     }
   },
   "defaults": {

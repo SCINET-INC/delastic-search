@@ -13,5 +13,5 @@ export const CLIENT_NAME = {
       agent ?? new HttpAgent(),
       idlFactory,
     );
-  }
-}
+  },
+};

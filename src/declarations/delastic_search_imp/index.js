@@ -1,16 +1,16 @@
 import { Actor, HttpAgent } from '@dfinity/agent';
 
 // Imports and re-exports candid interface
-import { idlFactory } from './delastic_search.did.js';
-export { idlFactory } from './delastic_search.did.js';
+import { idlFactory } from './delastic_search_imp.did.js';
+export { idlFactory } from './delastic_search_imp.did.js';
 // CANISTER_ID is replaced by webpack based on node environment
-export const canisterId = process.env.DELASTIC_SEARCH_CANISTER_ID;
+export const canisterId = process.env.DELASTIC_SEARCH_IMP_CANISTER_ID;
 
 /**
  *
  * @param {string | import("@dfinity/principal").Principal} canisterId Canister ID of Agent
  * @param {{agentOptions?: import("@dfinity/agent").HttpAgentOptions; actorOptions?: import("@dfinity/agent").ActorConfig}} [options]
- * @return {import("@dfinity/agent").ActorSubclass<import("./delastic_search.did.js")._SERVICE>}
+ * @return {import("@dfinity/agent").ActorSubclass<import("./delastic_search_imp.did.js")._SERVICE>}
  */
 export const createActor = (canisterId, options) => {
   const agent = new HttpAgent({ ...options?.agentOptions });
@@ -34,7 +34,7 @@ export const createActor = (canisterId, options) => {
 };
 
 /**
- * A ready-to-use agent for the delastic_search canister
- * @type {import("@dfinity/agent").ActorSubclass<import("./delastic_search.did.js")._SERVICE>}
+ * A ready-to-use agent for the delastic_search_imp canister
+ * @type {import("@dfinity/agent").ActorSubclass<import("./delastic_search_imp.did.js")._SERVICE>}
  */
-export const delastic_search = createActor(canisterId);
+export const delastic_search_imp = createActor(canisterId);

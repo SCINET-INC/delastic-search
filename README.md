@@ -1,8 +1,6 @@
-This module contains smart contract code for SCINET's api written in motoko.
+# delastic search
 
-Currently for our UIs to interface with our motoko code, we need to generate typescript and candid files and publish them to a private npm package. From there, our UIs can download the package from github and utilize it in their builds.
-
-To run the API locally, one must first run a local replica of the internet computer on their machine, then create all existing canisters on the local instance of IC, and finally build and deploy their canisters to said replica.
+A motoko client for elastic search on the internet computer.
 
 ## DFX Commands
 

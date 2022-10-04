@@ -1,3 +1,5 @@
+import TrieMap "mo:base/TrieMap";
+
 module {
 	public type RecordAttributes = [(Text, {#text : ?Text})];
 
@@ -6,6 +8,10 @@ module {
 		entityType : Text;
 		attributes : RecordAttributes;
 	};
+
+	type RecordList = [Record];
+
+	public type Index = TrieMap.TrieMap<Text, RecordList>;
 
 	public type Error = {
 		#NotFound;

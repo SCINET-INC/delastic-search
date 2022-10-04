@@ -7,19 +7,18 @@ export const idlFactory = ({ IDL }) => {
     attributes: RecordAttributes,
     entityType: IDL.Text,
   });
-  const Error = IDL.Variant({
-    NotFound: IDL.Null,
-    NotAuthorized: IDL.Null,
-    AlreadyExists: IDL.Null,
-    InternalError: IDL.Null,
-    Forbidden: IDL.Null,
-    BadRequest: IDL.Null,
+  const Result = IDL.Variant({
+    ok: IDL.Vec(Record),
+    err: IDL.Vec(Record),
   });
-  const Result = IDL.Variant({ ok: IDL.Vec(Record), err: Error });
   return IDL.Service({
-    addRecord: IDL.Func([Record, IDL.Vec(IDL.Text), IDL.Vec(IDL.Text)], [], []),
     queryIndex: IDL.Func([IDL.Text, IDL.Text], [Result], ['query']),
     removeRecord: IDL.Func([IDL.Text, IDL.Vec(IDL.Text)], [], []),
+    updateRecord: IDL.Func(
+      [Record, IDL.Vec(IDL.Text), IDL.Vec(IDL.Text)],
+      [],
+      [],
+    ),
   });
 };
 export const init = ({ IDL }) => {
