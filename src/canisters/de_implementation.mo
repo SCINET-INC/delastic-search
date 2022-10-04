@@ -23,11 +23,11 @@ actor DelasticSearchImp {
 		return #ok(indexedRecords); 
 	};
 
-	public func updateRecord (record: Types.Record, indexKeys: [Text], oldIndexKeys: [Text]) {
+	public func updateRecord (record: Types.Record, indexKeys: [Text], oldIndexKeys: [Text]) : async () {
 		DS.updateIndex(index, record, indexKeys, oldIndexKeys);
 	};
 
-	public func removeRecord (oldRecordId: Text, indexKeys: [Text]) {
+	public func removeRecord (oldRecordId: Text, indexKeys: [Text]) : async () {
 		DS.removeRecord(index, oldRecordId, indexKeys);
 	};
 }
