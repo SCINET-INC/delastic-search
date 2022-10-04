@@ -1,6 +1,6 @@
-## Related Story
+## Related Issue
 
-- Link to ShortCut story
+- Link to related Github Issue
 
 ## Info / Context
 
