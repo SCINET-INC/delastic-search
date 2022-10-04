@@ -7,9 +7,9 @@ import Nat "mo:base/Nat";
 import Prim "mo:prim";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
-import Types "./types";
 import Debug "mo:base/Debug";
 import TrieMap "mo:base/TrieMap";
+import Types "./types";
 
 module {
 	type FrequencyPair = {
