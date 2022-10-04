@@ -1,12 +1,12 @@
 type Result = 
  variant {
-   err: Error;
+   err: vec Record;
    ok: vec Record;
  };
 type RecordAttributes = 
  vec record {
        text;
-       variant {"text": opt text;};
+       AttributeValue;
      };
 type Record = 
  record {
@@ -14,17 +14,28 @@ type Record =
    entityType: text;
    id: text;
  };
-type Error = 
+type AttributeValuePrimitive = 
  variant {
-   AlreadyExists;
-   BadRequest;
-   Forbidden;
-   InternalError;
-   NotAuthorized;
-   NotFound;
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "text": text;
+ };
+type AttributeValue = 
+ variant {
+   arrayBool: vec bool;
+   arrayFloat: vec float64;
+   arrayInt: vec int;
+   arrayText: vec text;
+   "blob": blob;
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "text": text;
+   tuple: vec AttributeValuePrimitive;
  };
 service : {
-  addRecord: (Record, vec text, vec text) -> ();
   queryIndex: (text, text) -> (Result) query;
   removeRecord: (text, vec text) -> ();
+  updateRecord: (Record, vec text, vec text) -> ();
 }
