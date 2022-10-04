@@ -1,6 +1,6 @@
-## Related Story
+## Related Issue
 
-- Link to ShortCut story
+- Link to related Github Issue
 
 ## Info / Context
 
@@ -10,10 +10,3 @@
 
 - Change 1
 - Change 2
-
-## Testing
-
-- [ ] Includes test coverage
-- Procedure for reviewers
-
-## How do you feel about this PR? (GIF)
