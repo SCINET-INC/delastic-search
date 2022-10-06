@@ -30,7 +30,7 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     queryIndex: IDL.Func([IDL.Text, IDL.Text], [Result], ['query']),
     removeRecord: IDL.Func([IDL.Text, IDL.Vec(IDL.Text)], [], []),
-    updateRecord: IDL.Func(
+    updateIndex: IDL.Func(
       [Record, IDL.Vec(IDL.Text), IDL.Vec(IDL.Text)],
       [],
       [],
