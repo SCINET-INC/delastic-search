@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build": "tsdx build --tsconfig tsconfig.build.json",
+    "check-formatting": "pretty-quick --staged",
     "commit-lint": "commitlint -E HUSKY_GIT_PARAMS",
     "format": "prettier --write \"./**/*.{js,ts}\"",
     "generate": "dfx generate && node ./scripts/generate.js && yarn format",
