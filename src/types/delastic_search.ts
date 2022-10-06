@@ -27,5 +27,5 @@ export type Result = { ok: Array<Record> } | { err: Array<Record> };
 export interface _SERVICE {
   queryIndex: ActorMethod<[string, string], Result>;
   removeRecord: ActorMethod<[string, Array<string>], undefined>;
-  updateRecord: ActorMethod<[Record, Array<string>, Array<string>], undefined>;
+  updateIndex: ActorMethod<[Record, Array<string>, Array<string>], undefined>;
 }

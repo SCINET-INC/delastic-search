@@ -22,7 +22,7 @@ actor DelasticSearch {
 		return #ok(indexedRecords); 
 	};
 
-	public func updateRecord (record: DS.Record, indexKeys: [Text], oldIndexKeys: [Text]) : async () {
+	public func updateIndex (record: DS.Record, indexKeys: [Text], oldIndexKeys: [Text]) : async () {
 		DS.updateIndex(index, record, indexKeys, oldIndexKeys);
 	};
 
