@@ -62,9 +62,9 @@ module {
 	// delastic-search logic
 
 	private	func sortFrequencies(x: FrequencyPair, y: FrequencyPair) : { #less; #equal; #greater } {
-		if ( x.frequency > y.frequency) { #greater }
+		if ( x.frequency > y.frequency) { #less }
 		else if (x.frequency == y.frequency) { #equal }
-		else { #less }
+		else { #greater }
 	};
 
 	private func retrieveRecords (index: Index,tokens: [Text], entityType: Text) : [Record] {
