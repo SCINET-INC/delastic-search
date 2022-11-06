@@ -67,7 +67,7 @@ module {
 		else { #greater }
 	};
 
-	private func retrieveRecords (index: Index,tokens: [Text], entityType: Text) : [Record] {
+	private func retrieveRecords (index: Index, tokens: [Text], entityType: Text) : [Record] {
 		// hash with the records associated with the search
 		var recordMap = HashMap.HashMap<Text, Record>(10, Text.equal, Text.hash);
 
@@ -76,8 +76,8 @@ module {
 
  		// loop through each token and get all of its associated records
 		let lowercaseTokens = Buffer.Buffer<Text>(10);
-		for (token1 in tokens.vals()) {
-			let lowercaseToken = Text.map(token1, Prim.charToLower);
+		for (token in tokens.vals()) {
+			let lowercaseToken = Text.map(token, Prim.charToLower);
 			lowercaseTokens.add(lowercaseToken);
 		};
 		let lowercaseTokensArray = lowercaseTokens.toArray();
@@ -93,11 +93,12 @@ module {
 				};
 				case (?records) {
 					for(record in records.vals()) {
+						// if there's a filter added and the record doesn't match the filter, skip it
 						if (entityType != record.entityType and entityType != "all") {
 							continue loopToken;
 						};
 						switch(recordMap.get(record.id)) {
-							// add record to recordMap and frequency to recordFrequencyMap
+							// if the record doesn't exist yet in recordMap, add record to recordMap and frequency to recordFrequencyMap
 							case null {
 								let frequencyRecord : FrequencyPair = {
 									id = record.id;
@@ -110,6 +111,7 @@ module {
 						// no need to update recordMap because it already contains the record
 							case (?existingRecord) {
 								switch(recordFrequencyMap.get(existingRecord.id)) {
+									// if the frequency exists for this record, increment it
 									case (?existingFrequency) {
 										let newFrequency = existingFrequency.frequency + 1;
 										let frequencyRecord = {
@@ -118,6 +120,7 @@ module {
 										};
 										recordFrequencyMap.put(existingRecord.id, frequencyRecord);
 									};
+									// if the frequency doesn't exist for this record, then add it
 									case null {
 										let frequencyRecord = {
 											id = record.id;
@@ -137,10 +140,11 @@ module {
 		let frequencyEntries : [FrequencyPair] = Iter.toArray(recordFrequencyMap.vals());
 		let sortedFrequencies = Array.sort(frequencyEntries, sortFrequencies);
 
-		// reverse the list then get each associated record and return that shit
+		// reverse the list then get each associated record and return that list
 		let finalFreqList = Buffer.Buffer<Record>(10);
 		var frequencySize : Nat = sortedFrequencies.size();
 
+		// this function adds records to the final frequency list
 		func getRecord(frequencyId: Text) {
 			switch(recordMap.get(frequencyId)) {
 				case (?existingRecord) {
@@ -159,6 +163,7 @@ module {
 			let frequencyId : Text = frequencyPair.id;
 			getRecord(frequencyId);
 		} else {
+			// grab the records from the recordMap and add them to the finalFreqList for returning to the client
 			// TODO, switch this to 9 if greater than 10
 			var loopUpperBound : Nat = frequencySize - 1;
 			for (i in Iter.range(0, loopUpperBound)) {
@@ -167,6 +172,7 @@ module {
 				getRecord(frequencyId);
 			};
 		};
+		// TODO: only return 10 objects at a time
 		return finalFreqList.toArray();
 	};
 
