@@ -6,20 +6,20 @@ import Text "mo:base/Text";
 import Types "./types";
 
 module {
-	public func checkOldKeys(newKeysHash: HashMap.HashMap<Text, Bool>, oldKeys: [Text]) : [Text] {
-			var oldKeysBuffer = Buffer.Buffer<Text>(10);
-			if(oldKeys.size() < 1) {
-				return oldKeysBuffer.toArray();
-			};
+  public func checkOldKeys(newKeysHash : HashMap.HashMap<Text, Bool>, oldKeys : [Text]) : [Text] {
+    var oldKeysBuffer = Buffer.Buffer<Text>(10);
+    if (oldKeys.size() < 1) {
+      return oldKeysBuffer.toArray();
+    };
 
-			for(key in oldKeys.vals()) {
-				switch(newKeysHash.get(key)) {
-					case (null) {
-						oldKeysBuffer.add(key)
-					};
-					case (_) {};
-				};
-			};
-			return oldKeysBuffer.toArray();
-		};
+    for (key in oldKeys.vals()) {
+      switch (newKeysHash.get(key)) {
+        case (null) {
+          oldKeysBuffer.add(key);
+        };
+        case (_) {};
+      };
+    };
+    return oldKeysBuffer.toArray();
+  };
 };
