@@ -56,7 +56,6 @@ module {
   };
 
   // delastic-search logic
-
   private func sortFrequencies(x : FrequencyPair, y : FrequencyPair) : {
     #less;
     #equal;

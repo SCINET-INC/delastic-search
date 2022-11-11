@@ -28,6 +28,12 @@ indexKeys represent the keys in the index that you want to the record to be asso
 
 oldIndexKeys represent stale keys in the index that need to be purged of a record when its data changes. If you no longer want a record to be associated with a certain key, then include it in the oldIndexKeys array and DS will do the purging for you.
 
+DS.updateIndex accounts for adding new records and updating existing ones.
+
+### removeRecord
+
+DS.removeRecord expects the index, the record to be removed, and the indexKeys the record is currently paired with.
+
 ## Installation
 
 Using delastic-search is fairly simple. The package is installable via vessel in a motoko project and via an npm package in a javascript project.
@@ -42,7 +48,7 @@ let additions =
 	{
 		name = "delastic_search",
 		repo = "https://github.com/scinet-inc/delastic-search",
-		version = "v0.2.0",
+		version = "v0.3.1",
 		dependencies = [  "base" ]
 	}
 ] : List Package
