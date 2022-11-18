@@ -1,4 +1,4 @@
-# delastic search
+# DelasticSearch
 
 A motoko client for elastic search on the internet computer.
 
