@@ -215,12 +215,18 @@ module {
     };
   };
 
-  public func updateIndex(index : Index, newRecord : Record, indexKeys : [Text], oldIndexKeys : [Text]) {
+  public func updateIndex(index : Index, newRecord : Record, oldIndexKeys : [Text]) {
     // for each index key, loop through and see if that record already exists, if it does then filter it out, then add the object in the list and update the index
 
     func isNotMatch(record : Record) : Bool {
       record.id != newRecord.id;
     };
+
+    let indexKeys = Buffer.Buffer<Text>(newRecord.attributes.size());
+    for (attributePair in newRecord.attributes.vals()) {
+      let recordMap = HashMap indexKeys.add(attributePair.keys());
+    };
+    let indexKeysList = indexKeys.toArray();
 
     // clean up old indexes of non-relevant records
     if (oldIndexKeys.size() > 0) {
@@ -246,7 +252,7 @@ module {
     };
 
     // chop and return all substrings of each index key
-    let allTokens = chopTokens(indexKeys);
+    let allTokens = chopTokens(indexKeysList);
 
     for (key in allTokens.vals()) {
       let lowercaseKey = Text.map(key, Prim.charToLower);
