@@ -3,56 +3,32 @@ import Buffer "mo:base/Buffer";
 import Char "mo:base/Char";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
-import Nat "mo:base/Nat";
 import Prim "mo:prim";
-import Result "mo:base/Result";
 import Text "mo:base/Text";
-import Debug "mo:base/Debug";
-import TrieMap "mo:base/TrieMap";
+
+import Conversion "conversion";
+import Types "types";
 
 module {
-  // Types
-  public type AttributeValuePrimitive = {
-    #text : Text;
-    #int : Int;
-    #bool : Bool;
-    #float : Float;
-  };
 
-  public type AttributeValueBlob = {
-    #blob : Blob;
-  };
+  public type AttributeValuePrimitive = Types.AttributeValuePrimitive;
+  public type AttributeValueBlob = Types.AttributeValueBlob;
+  public type AttributeValueTuple = Types.AttributeValueTuple;
+  public type AttributeValueArray = Types.AttributeValueArray;
+  public type AttributeValue = Types.AttributeValue;
+  public type RecordAttributes = Types.RecordAttributes;
+  public type Record = Types.Record;
+  public type Index = Types.Index;
+  type RecordList = Types.RecordList;
+  type FrequencyPair = Types.FrequencyPair;
 
-  /// An AttributeValue can be an array of AttributeValuePrimitive (tuple type)
-  public type AttributeValueTuple = {
-    #tuple : [AttributeValuePrimitive];
-  };
-
-  /// An AttributeValue can be an array of any single one the primitive types (i.e. [Int])
-  public type AttributeValueArray = {
-    #arrayText : [Text];
-    #arrayInt : [Int];
-    #arrayBool : [Bool];
-    #arrayFloat : [Float];
-  };
-
-  public type AttributeValue = AttributeValuePrimitive or AttributeValueBlob or AttributeValueTuple or AttributeValueArray;
-
-  public type RecordAttributes = [(Text, AttributeValue)];
-
-  public type Record = {
-    id : Text;
-    entityType : Text;
-    attributes : RecordAttributes;
-  };
-
-  type RecordList = [Record];
-
-  public type Index = TrieMap.TrieMap<Text, RecordList>;
-
-  type FrequencyPair = {
-    id : Text;
-    frequency : Nat;
+  public func indexKeysFromAttributes(record: Record) : [Text] {
+    // Init with attributes size, but final array size can be bigger than that
+    let buffer = Buffer.Buffer<[Text]>(record.attributes.size());
+    for ((key, value) in Array.vals(record.attributes)){
+      buffer.add(Conversion.attributeToText(value));
+    };
+    Array.flatten(buffer.toArray());
   };
 
   // delastic-search logic
