@@ -2,11 +2,12 @@ import Iter "mo:base/Iter";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import TrieMap "mo:base/TrieMap";
+import Types "../types";
 import DS "../ds";
 
 actor DelasticSearch {
-  private stable var recordList : [(Text, [DS.Record])] = [];
-  private var index = TrieMap.fromEntries<Text, [DS.Record]>(Iter.fromArray(recordList), Text.equal, Text.hash);
+  private stable var recordList : [(Text, [Types.Record])] = [];
+  private var index = TrieMap.fromEntries<Text, [Types.Record]>(Iter.fromArray(recordList), Text.equal, Text.hash);
 
   system func preupgrade() {
     recordList := Iter.toArray(index.entries());
@@ -17,13 +18,13 @@ actor DelasticSearch {
     recordList := [];
   };
 
-  public query func queryIndex(queryString : Text, entityType : Text) : async Result.Result<[DS.Record], [DS.Record]> {
+  public query func queryIndex(queryString : Text, entityType : Text) : async Result.Result<[Types.Record], [Types.Record]> {
     let indexedRecords = DS.queryIndex(index, queryString, entityType);
     return #ok(indexedRecords);
   };
 
-  public func updateIndex(record : DS.Record, indexKeys : [Text], oldIndexKeys : [Text]) : async () {
-    DS.updateIndex(index, record, indexKeys, oldIndexKeys);
+  public func updateIndex(record : Types.Record, indexKeys : [Text], oldIndexKeys : [Text]) : async () {
+    DS.updateIndex(index, record, oldIndexKeys);
   };
 
   public func removeRecord(oldRecordId : Text, indexKeys : [Text]) : async () {
