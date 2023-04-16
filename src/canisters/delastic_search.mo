@@ -1,4 +1,5 @@
 import Iter "mo:base/Iter";
+import Nat "mo:base/Nat";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import TrieMap "mo:base/TrieMap";
@@ -17,7 +18,7 @@ actor DelasticSearch {
     recordList := [];
   };
 
-  public query func queryIndex(queryString : Text, entityType : Text) : async Result.Result<[DS.Record], [DS.Record]> {
+  public query func queryIndex(queryString : Text, order : Text, limit : Nat, lastIndex : Nat, entityType : Text) : async Result.Result<[DS.Record], [DS.Record]> {
     let indexedRecords = DS.queryIndex(index, queryString, entityType);
     return #ok(indexedRecords);
   };
