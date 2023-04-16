@@ -24,7 +24,7 @@ export type RecordAttributes = Array<[string, AttributeValue]>;
 export type Result = { 'ok' : Array<Record> } |
   { 'err' : Array<Record> };
 export interface _SERVICE {
-  'queryIndex' : ActorMethod<[string, string], Result>,
+  'queryIndex' : ActorMethod<[string, bigint, bigint, string], Result>,
   'removeRecord' : ActorMethod<[string, Array<string>], undefined>,
   'updateIndex' : ActorMethod<[Record, Array<string>], undefined>,
   'updateIndexWithKeys' : ActorMethod<
