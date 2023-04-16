@@ -19,7 +19,9 @@
     "commit-lint": "commitlint -E HUSKY_GIT_PARAMS",
     "format": "prettier --write \"./**/*.{js,ts}\"",
     "format-markdown": "prettier --write \"*.md\"",
-    "generate": "dfx generate && node ./scripts/generate.js && yarn format",
+    "format-motoko": "mo-fmt **/*.mo",
+    "generate": "dfx generate && node ./scripts/generate.js",
+    "generate-and-build": "yarn generate && yarn build",
     "prepare": "husky install && chmod ug+x .husky/*",
     "prepare-scripts": "chmod ug+x scripts/*",
     "publish-package": "yarn generate && yarn build && npm publish",
@@ -50,7 +52,7 @@
     "pretty-quick": "^3.1.2",
     "semantic-release": "^19.0.3",
     "tsdx": "^0.14.1",
-    "typescript": "^4.7.2"
+    "typescript": "4.4.3"
   },
   "release": {
     "branches": [

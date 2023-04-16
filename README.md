@@ -38,6 +38,10 @@ DS.removeRecord expects the index, the record to be removed, and the indexKeys t
 
 Using delastic-search is fairly simple. The package is installable via vessel in a motoko project and via an npm package in a javascript project.
 
+Install mo-fmt
+
+`npm install -g mo-fmt`
+
 ### Motoko Projects
 
 In a motoko project, simply add the package to your package-set.dhall's additions array like so:

@@ -6,7 +6,14 @@ let Package =
 let
   -- This is where you can add your own packages to the package-set
   additions =
-    [] : List Package
+    [
+      { 
+        name = "StableHashMap", 
+        repo = "https://github.com/canscale/StableHashMap",
+        version = "v0.2.2",
+        dependencies = [ "base" ]
+      },
+    ] : List Package
 
 let
   {- This is where you can override existing packages in the package-set

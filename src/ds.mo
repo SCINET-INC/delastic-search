@@ -9,54 +9,33 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Debug "mo:base/Debug";
 import TrieMap "mo:base/TrieMap";
+import Types "./types";
+import Conversion "./conversion"
 
 module {
-  // Types
-  public type AttributeValuePrimitive = {
-    #text : Text;
-    #int : Int;
-    #bool : Bool;
-    #float : Float;
-  };
+  public type AttributeValuePrimitive = Types.AttributeValuePrimitive;
+  public type AttributeValueBlob = Types.AttributeValueBlob;
+  public type AttributeValueTuple = Types.AttributeValueTuple;
+  public type AttributeValueArray = Types.AttributeValueArray;
+  public type AttributeValue = Types.AttributeValue;
+  public type RecordAttributes = Types.RecordAttributes;
+  public type Record = Types.Record;
+  public type Index = Types.Index;
+  type RecordList = Types.RecordList;
+  type FrequencyPair = Types.FrequencyPair;
 
-  public type AttributeValueBlob = {
-    #blob : Blob;
-  };
+  public func indexKeysFromAttributes(record : Record) : [Text] {
+    // Init with attributes size, but final array size can be bigger than that
+    let buffer = Buffer.Buffer<[Text]>(record.attributes.size());
+    for ((key, value) in Array.vals(record.attributes)) {
 
-  /// An AttributeValue can be an array of AttributeValuePrimitive (tuple type)
-  public type AttributeValueTuple = {
-    #tuple : [AttributeValuePrimitive];
-  };
-
-  /// An AttributeValue can be an array of any single one the primitive types (i.e. [Int])
-  public type AttributeValueArray = {
-    #arrayText : [Text];
-    #arrayInt : [Int];
-    #arrayBool : [Bool];
-    #arrayFloat : [Float];
-  };
-
-  public type AttributeValue = AttributeValuePrimitive or AttributeValueBlob or AttributeValueTuple or AttributeValueArray;
-
-  public type RecordAttributes = [(Text, AttributeValue)];
-
-  public type Record = {
-    id : Text;
-    entityType : Text;
-    attributes : RecordAttributes;
-  };
-
-  type RecordList = [Record];
-
-  public type Index = TrieMap.TrieMap<Text, RecordList>;
-
-  type FrequencyPair = {
-    id : Text;
-    frequency : Nat;
+      buffer.add(Conversion.attributeToText(value));
+    };
+    return Array.flatten(buffer.toArray());
   };
 
   // delastic-search logic
-  private func sortFrequencies(x : FrequencyPair, y : FrequencyPair) : {
+  private func sortFrequencies(x : Types.FrequencyPair, y : Types.FrequencyPair) : {
     #less;
     #equal;
     #greater;
@@ -66,12 +45,12 @@ module {
     } else { #greater };
   };
 
-  private func retrieveRecords(index : Index, tokens : [Text], entityType : Text) : [Record] {
+  private func retrieveRecords(index : Types.Index, tokens : [Text], entityType : Text) : [Types.Record] {
     // hash with the records associated with the search
-    var recordMap = HashMap.HashMap<Text, Record>(10, Text.equal, Text.hash);
+    var recordMap = HashMap.HashMap<Text, Types.Record>(10, Text.equal, Text.hash);
 
     // hash with the id of the record and the record's frequency within the search
-    var recordFrequencyMap = HashMap.HashMap<Text, FrequencyPair>(10, Text.equal, Text.hash);
+    var recordFrequencyMap = HashMap.HashMap<Text, Types.FrequencyPair>(10, Text.equal, Text.hash);
 
     // loop through each token and get all of its associated records
     let lowercaseTokens = Buffer.Buffer<Text>(10);
@@ -98,7 +77,7 @@ module {
             switch (recordMap.get(record.id)) {
               // if the record doesn't exist yet in recordMap, add record to recordMap and frequency to recordFrequencyMap
               case null {
-                let frequencyRecord : FrequencyPair = {
+                let frequencyRecord : Types.FrequencyPair = {
                   id = record.id;
                   frequency = 1;
                 };
@@ -135,11 +114,11 @@ module {
     };
 
     // sort the frequency list from greatest to least and return the first 10 records
-    let frequencyEntries : [FrequencyPair] = Iter.toArray(recordFrequencyMap.vals());
+    let frequencyEntries : [Types.FrequencyPair] = Iter.toArray(recordFrequencyMap.vals());
     let sortedFrequencies = Array.sort(frequencyEntries, sortFrequencies);
 
     // reverse the list then get each associated record and return that list
-    let finalFreqList = Buffer.Buffer<Record>(10);
+    let finalFreqList = Buffer.Buffer<Types.Record>(10);
     var frequencySize : Nat = sortedFrequencies.size();
 
     // this function adds records to the final frequency list
@@ -196,7 +175,7 @@ module {
     return bufferRecordsList.toArray();
   };
 
-  public func queryIndex(index : Index, queryString : Text, entityType : Text) : [Record] {
+  public func queryIndex(index : Types.Index, queryString : Text, entityType : Text) : [Types.Record] {
 
     // if the query string is empty then return nothing
     if (Text.size(queryString) == 0) {
@@ -215,7 +194,70 @@ module {
     };
   };
 
-  public func updateIndex(index : Index, newRecord : Record, indexKeys : [Text], oldIndexKeys : [Text]) {
+  public func updateIndex(index : Types.Index, newRecord : Types.Record, oldIndexKeys : [Text]) {
+    // for each index key, loop through and see if that record already exists, if it does then filter it out, then add the object in the list and update the index
+
+    func isNotMatch(record : Types.Record) : Bool {
+      record.id != newRecord.id;
+    };
+
+    let indexKeys = Buffer.Buffer<Text>(newRecord.attributes.size());
+    for ((key, value) in newRecord.attributes.vals()) {
+      indexKeys.add(key);
+    };
+    let indexKeysList = indexKeys.toArray();
+
+    // clean up old indexes of non-relevant records
+    if (oldIndexKeys.size() > 0) {
+      for (key in oldIndexKeys.vals()) {
+        let lowercaseKey = Text.map(key, Prim.charToLower);
+        switch (index.get(lowercaseKey)) {
+          case (?existingRecords) {
+            // remove old record
+            let filteredRecords = Array.filter(existingRecords, isNotMatch);
+
+            // make a new list and add the updated record to it
+            let bufferRecordsList = Buffer.Buffer<Types.Record>(filteredRecords.size());
+            for (record in filteredRecords.vals()) {
+              bufferRecordsList.add(record);
+            };
+            let newRecordsList = bufferRecordsList.toArray();
+            index.put(lowercaseKey, newRecordsList);
+          };
+          // if the key does not exist on the index then create it with the new record
+          case (_) {};
+        };
+      };
+    };
+
+    // chop and return all substrings of each index key
+    let allTokens = chopTokens(indexKeysList);
+
+    for (key in allTokens.vals()) {
+      let lowercaseKey = Text.map(key, Prim.charToLower);
+      switch (index.get(lowercaseKey)) {
+        case (?existingRecords) {
+          // remove old record
+          let filteredRecords = Array.filter(existingRecords, isNotMatch);
+
+          // make a new list and add the updated record to it
+          let bufferRecordsList = Buffer.Buffer<Types.Record>(filteredRecords.size());
+          bufferRecordsList.add(newRecord);
+          for (record in filteredRecords.vals()) {
+            bufferRecordsList.add(record);
+          };
+          let newRecordsList = bufferRecordsList.toArray();
+          index.put(lowercaseKey, newRecordsList);
+        };
+        // if the key does not exist on the index then create it with the new record
+        case null {
+          index.put(lowercaseKey, [newRecord]);
+        };
+      };
+    };
+  };
+
+  public func updateIndexWithKeys(index : Types.Index, newRecord : Types.Record, indexKeys : [Text], oldIndexKeys : [Text]) {
     // for each index key, loop through and see if that record already exists, if it does then filter it out, then add the object in the list and update the index
 
     func isNotMatch(record : Record) : Bool {
@@ -272,11 +314,11 @@ module {
     };
   };
 
-  public func removeRecord(index : Index, oldRecordId : Text, indexKeys : [Text]) {
+  public func removeRecord(index : Types.Index, oldRecordId : Text, indexKeys : [Text]) {
     // chop and return all substrings of each index key
     let allTokens = chopTokens(indexKeys);
     for (key in allTokens.vals()) {
-      func isNotMatch(record : Record) : Bool {
+      func isNotMatch(record : Types.Record) : Bool {
         record.id != oldRecordId;
       };
 

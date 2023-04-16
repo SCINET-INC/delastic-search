@@ -1,7 +1,8 @@
 {
   "canisters": {
     "delastic_search": {
-      "main": "src/canisters/delastic_search.mo"
+      "main": "src/canisters/delastic_search.mo",
+      "type": "motoko"
     }
   },
   "defaults": {
@@ -9,10 +10,9 @@
       "packtool": "vessel sources"
     }
   },
-  "dfx": "0.11.0",
   "networks": {
     "local": {
-      "bind": "127.0.0.1:8000",
+      "bind": "127.0.0.1:4943",
       "type": "ephemeral"
     }
   },
