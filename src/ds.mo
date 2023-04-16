@@ -153,7 +153,6 @@ module {
       getRecord(frequencyId);
     } else {
       // grab the records from the recordMap and add them to the freqList for returning to the client
-      // TODO, switch this to 9 if greater than 10
       var loopUpperBound : Nat = frequencySize - 1;
       for (i in Iter.range(0, loopUpperBound)) {
         let frequencyPair = sortedFrequencies[i];
@@ -161,7 +160,7 @@ module {
         getRecord(frequencyId);
       };
     };
-    // TODO: only return 10 objects at a time
+
     let finalFreqList = determineFinalFreqList(freqList.toArray(), limit, lastIndex);
     return finalFreqList;
   };
