@@ -1,4 +1,4 @@
-name: "Delastic Search Integration"
+name: 'Delastic Search Integration'
 on:
   pull_request:
     branches: [main]
@@ -15,14 +15,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: "https://npm.pkg.github.com"
-          scope: "@scinet-inc"
-      - name: "Install IC Replica"
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@scinet-inc'
+      - name: 'Install IC Replica'
         run: ./scripts/install-replica.sh
       - uses: aviate-labs/setup-dfx@v0.2.3
         with:
           vessel-version: 0.6.3
-          dfx-version: 0.11.0
+          dfx-version: 0.12.1
         env:
           DFX_IDENTITY_PEM: ${{ secrets.DFX_IDENTITY_PEM }}
       - name: Install dependencies
@@ -39,7 +39,5 @@ jobs:
         run: dfx canister create --all
       - name: Build canisters
         run: dfx build
-      - name: Generate
-        run: yarn generate
       - name: Build
         run: yarn build
