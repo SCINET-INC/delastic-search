@@ -4,12 +4,13 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import HM "mo:StableHashMap/ClassStableHashMap";
 import DS "../ds";
+import Types "../types";
 
 actor DelasticSearch {
   private var index = HM.StableHashMap<Text, [DS.Record]>(10, Text.equal, Text.hash);
 
-  public query func queryIndex(queryString : Text, order : Text, limit : Nat, lastIndex : Nat, entityType : Text) : async Result.Result<[DS.Record], [DS.Record]> {
-    let indexedRecords = DS.queryIndex(index, queryString, entityType);
+  public query func queryIndex(queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : async Result.Result<[DS.Record], [DS.Record]> {
+    let indexedRecords = DS.queryIndex(index, queryString, limit, lastIndex, entityType);
     return #ok(indexedRecords);
   };
 

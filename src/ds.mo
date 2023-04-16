@@ -10,7 +10,7 @@ import Text "mo:base/Text";
 import Debug "mo:base/Debug";
 import TrieMap "mo:base/TrieMap";
 import Types "./types";
-import Conversion "./conversion"
+import Conversion "./conversion";
 
 module {
   public type AttributeValuePrimitive = Types.AttributeValuePrimitive;
@@ -24,7 +24,7 @@ module {
   type RecordList = Types.RecordList;
   type FrequencyPair = Types.FrequencyPair;
 
-  public func indexKeysFromAttributes(record : Record) : [Text] {
+  private func indexKeysFromAttributes(record : Record) : [Text] {
     // Init with attributes size, but final array size can be bigger than that
     let buffer = Buffer.Buffer<[Text]>(record.attributes.size());
     for ((key, value) in Array.vals(record.attributes)) {
@@ -45,7 +45,19 @@ module {
     } else { #greater };
   };
 
-  private func retrieveRecords(index : Types.Index, tokens : [Text], entityType : Text) : [Types.Record] {
+  private func determineFinalFreqList(freqList : [Types.Record], limit : Nat, lastIndex : Nat) : [Record] {
+    let finalFreqBuffer = Buffer.Buffer<Record>(10);
+    var index = 0;
+
+    var upperBound : Nat = lastIndex + limit - 1;
+
+    for (i in Iter.range(lastIndex, upperBound)) {
+      finalFreqBuffer.add(freqList[i]);
+    };
+    return finalFreqBuffer.toArray();
+  };
+
+  private func retrieveRecords(index : Types.Index, tokens : [Text], limit : Nat, lastIndex : Nat, entityType : Text) : [Types.Record] {
     // hash with the records associated with the search
     var recordMap = HashMap.HashMap<Text, Types.Record>(10, Text.equal, Text.hash);
 
@@ -118,14 +130,14 @@ module {
     let sortedFrequencies = Array.sort(frequencyEntries, sortFrequencies);
 
     // reverse the list then get each associated record and return that list
-    let finalFreqList = Buffer.Buffer<Types.Record>(10);
+    let freqList = Buffer.Buffer<Types.Record>(10);
     var frequencySize : Nat = sortedFrequencies.size();
 
     // this function adds records to the final frequency list
     func getRecord(frequencyId : Text) {
       switch (recordMap.get(frequencyId)) {
         case (?existingRecord) {
-          finalFreqList.add(existingRecord);
+          freqList.add(existingRecord);
         };
         case (_) {};
       };
@@ -140,7 +152,7 @@ module {
       let frequencyId : Text = frequencyPair.id;
       getRecord(frequencyId);
     } else {
-      // grab the records from the recordMap and add them to the finalFreqList for returning to the client
+      // grab the records from the recordMap and add them to the freqList for returning to the client
       // TODO, switch this to 9 if greater than 10
       var loopUpperBound : Nat = frequencySize - 1;
       for (i in Iter.range(0, loopUpperBound)) {
@@ -150,7 +162,8 @@ module {
       };
     };
     // TODO: only return 10 objects at a time
-    return finalFreqList.toArray();
+    let finalFreqList = determineFinalFreqList(freqList.toArray(), limit, lastIndex);
+    return finalFreqList;
   };
 
   private func chopTokens(tokens : [Text]) : [Text] {
@@ -175,7 +188,7 @@ module {
     return bufferRecordsList.toArray();
   };
 
-  public func queryIndex(index : Types.Index, queryString : Text, entityType : Text) : [Types.Record] {
+  public func queryIndex(index : Types.Index, queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : [Types.Record] {
 
     // if the query string is empty then return nothing
     if (Text.size(queryString) == 0) {
@@ -185,11 +198,11 @@ module {
     // separate tokens/words from query string
     if (Text.contains(queryString, #char ' ')) {
       let tokens = Text.split(queryString, #char ' ');
-      let relevantRecords = retrieveRecords(index, Iter.toArray(tokens), entityType);
+      let relevantRecords = retrieveRecords(index, Iter.toArray(tokens), limit, lastIndex, entityType);
       return relevantRecords;
     } else {
       // edge case for no spaces
-      let relevantRecords = retrieveRecords(index, [queryString], entityType);
+      let relevantRecords = retrieveRecords(index, [queryString], limit, lastIndex, entityType);
       return relevantRecords;
     };
   };

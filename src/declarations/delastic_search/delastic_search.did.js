@@ -28,7 +28,11 @@ export const idlFactory = ({ IDL }) => {
     'err' : IDL.Vec(Record),
   });
   return IDL.Service({
-    'queryIndex' : IDL.Func([IDL.Text, IDL.Text], [Result], ['query']),
+    'queryIndex' : IDL.Func(
+        [IDL.Text, IDL.Nat, IDL.Nat, IDL.Text],
+        [Result],
+        ['query'],
+      ),
     'removeRecord' : IDL.Func([IDL.Text, IDL.Vec(IDL.Text)], [], []),
     'updateIndex' : IDL.Func([Record, IDL.Vec(IDL.Text)], [], []),
     'updateIndexWithKeys' : IDL.Func(

@@ -35,7 +35,7 @@ type AttributeValue =
    tuple: vec AttributeValuePrimitive;
  };
 service : {
-  queryIndex: (text, text) -> (Result) query;
+  queryIndex: (text, nat, nat, text) -> (Result) query;
   removeRecord: (text, vec text) -> ();
   updateIndex: (Record, vec text) -> ();
   updateIndexWithKeys: (Record, vec text, vec text) -> ();
