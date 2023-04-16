@@ -3,9 +3,9 @@ import type {
   HttpAgentOptions,
   ActorConfig,
   Agent,
-} from '@dfinity/agent';
-import type { Principal } from '@dfinity/principal';
-import type { IDL } from '@dfinity/candid';
+} from "@dfinity/agent";
+import type { Principal } from "@dfinity/principal";
+import type { IDL } from "@dfinity/candid";
 
 import { _SERVICE } from './delastic_search.did';
 
@@ -40,7 +40,7 @@ export declare interface CreateActorOptions {
  */
 export declare const createActor: (
   canisterId: string | Principal,
-  options?: CreateActorOptions,
+  options?: CreateActorOptions
 ) => ActorSubclass<_SERVICE>;
 
 /**
