@@ -10,8 +10,29 @@ import Text "mo:base/Text";
 import Debug "mo:base/Debug";
 import TrieMap "mo:base/TrieMap";
 import Types "./types";
+import Conversion "./conversion"
 
 module {
+  public type AttributeValuePrimitive = Types.AttributeValuePrimitive;
+  public type AttributeValueBlob = Types.AttributeValueBlob;
+  public type AttributeValueTuple = Types.AttributeValueTuple;
+  public type AttributeValueArray = Types.AttributeValueArray;
+  public type AttributeValue = Types.AttributeValue;
+  public type RecordAttributes = Types.RecordAttributes;
+  public type Record = Types.Record;
+  public type Index = Types.Index;
+  type RecordList = Types.RecordList;
+  type FrequencyPair = Types.FrequencyPair;
+
+  public func indexKeysFromAttributes(record : Record) : [Text] {
+    // Init with attributes size, but final array size can be bigger than that
+    let buffer = Buffer.Buffer<[Text]>(record.attributes.size());
+    for ((key, value) in Array.vals(record.attributes)) {
+
+      buffer.add(Conversion.attributeToText(value));
+    };
+    return Array.flatten(buffer.toArray());
+  };
 
   // delastic-search logic
   private func sortFrequencies(x : Types.FrequencyPair, y : Types.FrequencyPair) : {
@@ -221,6 +242,63 @@ module {
 
           // make a new list and add the updated record to it
           let bufferRecordsList = Buffer.Buffer<Types.Record>(filteredRecords.size());
+          bufferRecordsList.add(newRecord);
+          for (record in filteredRecords.vals()) {
+            bufferRecordsList.add(record);
+          };
+          let newRecordsList = bufferRecordsList.toArray();
+          index.put(lowercaseKey, newRecordsList);
+        };
+        // if the key does not exist on the index then create it with the new record
+        case null {
+          index.put(lowercaseKey, [newRecord]);
+        };
+      };
+    };
+  };
+
+  public func updateIndexWithKeys(index : Types.Index, newRecord : Types.Record, indexKeys : [Text], oldIndexKeys : [Text]) {
+    // for each index key, loop through and see if that record already exists, if it does then filter it out, then add the object in the list and update the index
+
+    func isNotMatch(record : Record) : Bool {
+      record.id != newRecord.id;
+    };
+
+    // clean up old indexes of non-relevant records
+    if (oldIndexKeys.size() > 0) {
+      for (key in oldIndexKeys.vals()) {
+        let lowercaseKey = Text.map(key, Prim.charToLower);
+        switch (index.get(lowercaseKey)) {
+          case (?existingRecords) {
+            // remove old record
+            let filteredRecords = Array.filter(existingRecords, isNotMatch);
+
+            // make a new list and add the updated record to it
+            let bufferRecordsList = Buffer.Buffer<Record>(filteredRecords.size());
+            for (record in filteredRecords.vals()) {
+              bufferRecordsList.add(record);
+            };
+            let newRecordsList = bufferRecordsList.toArray();
+            index.put(lowercaseKey, newRecordsList);
+          };
+          // if the key does not exist on the index then create it with the new record
+          case (_) {};
+        };
+      };
+    };
+
+    // chop and return all substrings of each index key
+    let allTokens = chopTokens(indexKeys);
+
+    for (key in allTokens.vals()) {
+      let lowercaseKey = Text.map(key, Prim.charToLower);
+      switch (index.get(lowercaseKey)) {
+        case (?existingRecords) {
+          // remove old record
+          let filteredRecords = Array.filter(existingRecords, isNotMatch);
+
+          // make a new list and add the updated record to it
+          let bufferRecordsList = Buffer.Buffer<Record>(filteredRecords.size());
           bufferRecordsList.add(newRecord);
           for (record in filteredRecords.vals()) {
             bufferRecordsList.add(record);
