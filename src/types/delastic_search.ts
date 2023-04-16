@@ -5,7 +5,7 @@ export type AttributeValue =
   | { int: bigint }
   | { float: number }
   | { tuple: Array<AttributeValuePrimitive> }
-  | { blob: Array<number> }
+  | { blob: Uint8Array }
   | { bool: boolean }
   | { text: string }
   | { arrayBool: Array<boolean> }
