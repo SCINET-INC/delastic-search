@@ -3042,6 +3042,11 @@ color-support@^1.1.3:
   resolved "https://registry.yarnpkg.com/color-support/-/color-support-1.1.3.tgz#93834379a1cc9a0c61f82f52f0d04322251bd5a2"
   integrity sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==
 
+colorette@1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.2.2.tgz#cbcc79d5e99caea2dbf10eb3a26fd8b3e6acfa94"
+  integrity sha512-MKGMzyfeuutC/ZJ1cba9NqcNpfeqMUcYmyF1ZFY6/Cn7CNSAKx6a+s48sqLqyAiZuaP2TcqMhoo+dlwFnVxT9w==
+
 columnify@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/columnify/-/columnify-1.6.0.tgz#6989531713c9008bb29735e61e37acf5bd553cf3"
@@ -4530,6 +4535,18 @@ glob-parent@^5.0.0, glob-parent@^5.1.2:
   integrity sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==
   dependencies:
     is-glob "^4.0.1"
+
+glob@7.1.7:
+  version "7.1.7"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.7.tgz#3b193e9233f01d42d0b3f78294bbeeb418f94a90"
+  integrity sha512-OvD9ENzPLbegENnYP5UUfJIirTg4+XwMWGaQfQTY0JenxNvvIKP3U3/tAQSPIu/lHxXYSZmpXlUHeqAIdKzBLQ==
+  dependencies:
+    fs.realpath "^1.0.0"
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "^3.0.4"
+    once "^1.3.0"
+    path-is-absolute "^1.0.0"
 
 glob@^7.0.0, glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@^7.1.4, glob@^7.1.6:
   version "7.2.3"
@@ -7075,6 +7092,14 @@ os-tmpdir@~1.0.2:
   resolved "https://registry.yarnpkg.com/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
   integrity sha512-D2FR03Vir7FIu45XBY20mTb+/ZSWB00sjU9jdQXt83gDrI4Ztz5Fs7/yy74g2N5SVQY4xY1qDr4rNddwYRVX0g==
 
+out-of-character@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/out-of-character/-/out-of-character-1.2.1.tgz#383bf683e58f654ee1f348029367edf5c79ba87d"
+  integrity sha512-clqCX4lNQa5Qr7urMNej2DbKVt+SO5CZ9Sq4XYEJ04qzvDHA4yFMhz0F+vLrfxO89640x8W56D7wtNoAgCCcAA==
+  dependencies:
+    colorette "1.2.2"
+    glob "7.1.7"
+
 p-each-series@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/p-each-series/-/p-each-series-2.2.0.tgz#105ab0357ce72b202a8a8b94933672657b5e2a9a"
@@ -7379,6 +7404,13 @@ prettier-plugin-motoko@^0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/prettier-plugin-motoko/-/prettier-plugin-motoko-0.2.3.tgz#8e917dd2d2e1c091e4e564b19a7850e30e1b8f79"
   integrity sha512-6n3ZWssbbCLVZfCjEwZcGmy+RvIP18HsPqMFo8G6ILoCYNyqzKwbuW7z9FxlwZSwia7e7vq301JgcoNEgS7afA==
+
+prettier-plugin-motoko@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/prettier-plugin-motoko/-/prettier-plugin-motoko-0.5.2.tgz#a3a8a133847a774e1e8ff2e1df164659e3ef412f"
+  integrity sha512-0KjHdFqeJDFcf1Z4dB7dbAWjfCZIo6J/X/ONGMyOq85mDh0eg6exB3nRVXvCz7wIOY49ZlQEZZIAnmJqEW3+dA==
+  dependencies:
+    out-of-character "^1.2.1"
 
 prettier@^1.19.1:
   version "1.19.1"

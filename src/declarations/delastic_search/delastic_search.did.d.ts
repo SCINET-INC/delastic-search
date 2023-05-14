@@ -4,7 +4,7 @@ import type { ActorMethod } from '@dfinity/agent';
 export type AttributeValue = { 'int' : bigint } |
   { 'float' : number } |
   { 'tuple' : Array<AttributeValuePrimitive> } |
-  { 'blob' : Uint8Array } |
+  { 'blob' : Uint8Array | number[] } |
   { 'bool' : boolean } |
   { 'text' : string } |
   { 'arrayBool' : Array<boolean> } |
