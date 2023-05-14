@@ -1,4 +1,4 @@
-import HM "mo:StableHashMap/ClassStableHashMap";
+import TrieMap "mo:base/TrieMap";
 
 module {
   public type AttributeValuePrimitive = {
@@ -37,7 +37,7 @@ module {
 
   public type RecordList = [Record];
 
-  public type Index = HM.StableHashMap<Text, RecordList>;
+  public type Index = TrieMap.TrieMap<Text, RecordList>;
 
   public type FrequencyPair = {
     id : Text;

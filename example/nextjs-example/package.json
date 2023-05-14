@@ -1,0 +1,37 @@
+{
+  "name": "nextjs-example",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "rm -rf local_canister_ids.json && node ./scripts/setup-dev && env-cmd -f .env.development next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prepare-scripts": "chmod ug+x scripts/*",
+    "seed": "dfx canister call delastic_search seed",
+    "get-index-size": "dfx canister call delastic_search returnIndexSize",
+    "get-keys": "dfx canister call delastic_search keys",
+    "get-vals": "dfx canister call delastic_search vals"
+  },
+  "dependencies": {
+    "@dfinity/agent": "^0.15.6",
+    "@scinet-inc/delastic-search": "^0.5.1",
+    "@types/node": "20.1.4",
+    "@types/react": "18.2.6",
+    "@types/react-dom": "18.2.4",
+    "autoprefixer": "10.4.14",
+    "eslint": "8.40.0",
+    "eslint-config-next": "13.4.2",
+    "next": "13.4.2",
+    "postcss": "8.4.23",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "3.3.2",
+    "typescript": "5.0.4",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.1",
+    "env-cmd": "^10.1.0"
+  }
+}

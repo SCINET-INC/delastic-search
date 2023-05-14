@@ -45,15 +45,38 @@ module {
     } else { #greater };
   };
 
+  private func determineUpperBound(lastIndex : Nat, limit : Nat, listSize : Nat) : Nat {
+    if (limit - listSize > 0) {
+      return limit;
+    };
+
+    return lastIndex + limit - 1;
+    // example: there are 2 records
+    // then the upperBound needs to be lastIndex + 1
+    // example: there are
+    // if the listSize is smaller than the limit, then the upperbound need to be lastIndex
+  };
+
   private func determineFinalFreqList(freqList : [Types.Record], limit : Nat, lastIndex : Nat) : [Record] {
+    Debug.print("**determineFinalFreqList");
+
     let finalFreqBuffer = Buffer.Buffer<Record>(10);
     var index = 0;
 
     var upperBound : Nat = lastIndex + limit - 1;
+    Debug.print("**upperBound");
+    Debug.print(Nat.toText(upperBound));
 
     for (i in Iter.range(lastIndex, upperBound)) {
+      Debug.print(freqList[i].entityType);
+
       finalFreqBuffer.add(freqList[i]);
+      Debug.print("**end of loop, success");
+
     };
+    Debug.print("**end of determineFinalFreqList, with size");
+    Debug.print(Nat.toText(finalFreqBuffer.size()));
+
     return Buffer.toArray(finalFreqBuffer);
   };
 
@@ -63,6 +86,7 @@ module {
 
     // hash with the id of the record and the record's frequency within the search
     var recordFrequencyMap = HashMap.HashMap<Text, Types.FrequencyPair>(10, Text.equal, Text.hash);
+    Debug.print("**start of retrieveRecords");
 
     // loop through each token and get all of its associated records
     let lowercaseTokens = Buffer.Buffer<Text>(10);
@@ -125,6 +149,8 @@ module {
       };
     };
 
+    Debug.print("**frequencyEntries");
+
     // sort the frequency list from greatest to least and return the first 10 records
     let frequencyEntries : [Types.FrequencyPair] = Iter.toArray(recordFrequencyMap.vals());
     let sortedFrequencies = Array.sort(frequencyEntries, sortFrequencies);
@@ -147,11 +173,15 @@ module {
     if (frequencySize < 1) {
       return [];
     } else if (frequencySize == 1) {
+      Debug.print("**freq size is 1");
+
       // if there is one record, return it
       let frequencyPair = sortedFrequencies[0];
       let frequencyId : Text = frequencyPair.id;
       getRecord(frequencyId);
     } else {
+      Debug.print("**second else");
+
       // grab the records from the recordMap and add them to the freqList for returning to the client
       var loopUpperBound : Nat = frequencySize - 1;
       for (i in Iter.range(0, loopUpperBound)) {
@@ -160,8 +190,12 @@ module {
         getRecord(frequencyId);
       };
     };
+    Debug.print("**right before finalFreqList");
 
     let finalFreqList = determineFinalFreqList(Buffer.toArray(freqList), limit, lastIndex);
+    Debug.print("**finished finalFreqList");
+    Debug.print(Nat.toText(finalFreqList.size()));
+
     return finalFreqList;
   };
 
@@ -188,6 +222,7 @@ module {
   };
 
   public func queryIndex(index : Types.Index, queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : [Types.Record] {
+    Debug.print("**start of queryIndex2");
 
     // if the query string is empty then return nothing
     if (Text.size(queryString) == 0) {
@@ -201,6 +236,8 @@ module {
       return relevantRecords;
     } else {
       // edge case for no spaces
+      Debug.print("**first else");
+
       let relevantRecords = retrieveRecords(index, [queryString], limit, lastIndex, entityType);
       return relevantRecords;
     };
