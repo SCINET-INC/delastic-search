@@ -31,7 +31,7 @@ module {
 
       buffer.add(Conversion.attributeToText(value));
     };
-    return Array.flatten(buffer.toArray());
+    return Array.flatten(Buffer.toArray(buffer));
   };
 
   // delastic-search logic
@@ -54,7 +54,7 @@ module {
     for (i in Iter.range(lastIndex, upperBound)) {
       finalFreqBuffer.add(freqList[i]);
     };
-    return finalFreqBuffer.toArray();
+    return Buffer.toArray(finalFreqBuffer);
   };
 
   private func retrieveRecords(index : Types.Index, tokens : [Text], limit : Nat, lastIndex : Nat, entityType : Text) : [Types.Record] {
@@ -70,7 +70,7 @@ module {
       let lowercaseToken = Text.map(token, Prim.charToLower);
       lowercaseTokens.add(lowercaseToken);
     };
-    let lowercaseTokensArray = lowercaseTokens.toArray();
+    let lowercaseTokensArray = Buffer.toArray(lowercaseTokens);
 
     label loopToken for (token in lowercaseTokensArray.vals()) {
       let records = index.get(token);
@@ -161,7 +161,7 @@ module {
       };
     };
 
-    let finalFreqList = determineFinalFreqList(freqList.toArray(), limit, lastIndex);
+    let finalFreqList = determineFinalFreqList(Buffer.toArray(freqList), limit, lastIndex);
     return finalFreqList;
   };
 
@@ -184,7 +184,7 @@ module {
         index := index + 1;
       };
     };
-    return bufferRecordsList.toArray();
+    return Buffer.toArray(bufferRecordsList);
   };
 
   public func queryIndex(index : Types.Index, queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : [Types.Record] {
@@ -217,7 +217,7 @@ module {
     for ((key, value) in newRecord.attributes.vals()) {
       indexKeys.add(key);
     };
-    let indexKeysList = indexKeys.toArray();
+    let indexKeysList = Buffer.toArray(indexKeys);
 
     // clean up old indexes of non-relevant records
     if (oldIndexKeys.size() > 0) {
@@ -233,7 +233,7 @@ module {
             for (record in filteredRecords.vals()) {
               bufferRecordsList.add(record);
             };
-            let newRecordsList = bufferRecordsList.toArray();
+            let newRecordsList = Buffer.toArray(bufferRecordsList);
             index.put(lowercaseKey, newRecordsList);
           };
           // if the key does not exist on the index then create it with the new record
@@ -258,7 +258,7 @@ module {
           for (record in filteredRecords.vals()) {
             bufferRecordsList.add(record);
           };
-          let newRecordsList = bufferRecordsList.toArray();
+          let newRecordsList = Buffer.toArray(bufferRecordsList);
           index.put(lowercaseKey, newRecordsList);
         };
         // if the key does not exist on the index then create it with the new record
@@ -290,7 +290,7 @@ module {
             for (record in filteredRecords.vals()) {
               bufferRecordsList.add(record);
             };
-            let newRecordsList = bufferRecordsList.toArray();
+            let newRecordsList = Buffer.toArray(bufferRecordsList);
             index.put(lowercaseKey, newRecordsList);
           };
           // if the key does not exist on the index then create it with the new record
@@ -315,7 +315,7 @@ module {
           for (record in filteredRecords.vals()) {
             bufferRecordsList.add(record);
           };
-          let newRecordsList = bufferRecordsList.toArray();
+          let newRecordsList = Buffer.toArray(bufferRecordsList);
           index.put(lowercaseKey, newRecordsList);
         };
         // if the key does not exist on the index then create it with the new record
@@ -346,7 +346,7 @@ module {
       };
     };
   };
-}
+};
 
 // TODO
 // Tests

@@ -16,7 +16,7 @@ module {
     if (bool) { "true" } else { "false" };
   };
 
-  func primitiveToText(primitive : Types.AttributeValuePrimitive) : Text {
+  public func primitiveToText(primitive : Types.AttributeValuePrimitive) : Text {
     switch (primitive) {
       case (#text(text)) { text };
       case (#int(int)) { Int.toText(int) };
@@ -25,15 +25,14 @@ module {
     };
   };
 
-  func bytesToNat32(bytes : [Nat8]) : Nat32 {
-
+  public func bytesToNat32(bytes : [Nat8]) : Nat32 {
     (Nat32.fromNat(Nat8.toNat(bytes[0])) << 24) +
     (Nat32.fromNat(Nat8.toNat(bytes[1])) << 16) +
     (Nat32.fromNat(Nat8.toNat(bytes[2])) << 8) +
     (Nat32.fromNat(Nat8.toNat(bytes[3])));
   };
 
-  func blobToText(blob : Types.AttributeValueBlob) : Text {
+  public func blobToText(blob : Types.AttributeValueBlob) : Text {
     switch (blob) {
       case (#blob(inner)) {
         var bytes = Blob.toArray(inner);
@@ -53,19 +52,19 @@ module {
     };
   };
 
-  func tupleToText(tuple : Types.AttributeValueTuple) : [Text] {
+  public func tupleToText(tuple : Types.AttributeValueTuple) : [Text] {
     switch (tuple) {
       case (#tuple(inner)) {
         let buffer = Buffer.Buffer<Text>(inner.size());
         for (value in Array.vals(inner)) {
           buffer.add(primitiveToText(value));
         };
-        buffer.toArray();
+        Buffer.toArray(buffer);
       };
     };
   };
 
-  func arrayToText(array : Types.AttributeValueArray) : [Text] {
+  public func arrayToText(array : Types.AttributeValueArray) : [Text] {
     switch (array) {
       case (#arrayText(arrayText)) { arrayText };
       case (#arrayInt(arrayInt)) { toTextArray<Int>(arrayInt, Int.toText) };
@@ -76,12 +75,12 @@ module {
     };
   };
 
-  func toTextArray<T>(array : [T], to_text : (T) -> Text) : [Text] {
+  public func toTextArray<T>(array : [T], to_text : (T) -> Text) : [Text] {
     let buffer = Buffer.Buffer<Text>(array.size());
     for (t in Array.vals(array)) {
       buffer.add(to_text(t));
     };
-    buffer.toArray();
+    Buffer.toArray(buffer);
   };
 
   public func attributeToText(attributeValue : Types.AttributeValue) : [Text] {
