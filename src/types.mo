@@ -43,4 +43,16 @@ module {
     id : Text;
     frequency : Nat;
   };
+
+  public type QueryResponse = {
+    records : [Record];
+    nextLastIndex : Nat;
+    itemsRemaining : Nat;
+  };
+
+  public type PaginationParams = {
+    upperBound : Nat;
+    itemsRemaining : Nat;
+    nextLastIndex : Nat;
+  };
 };

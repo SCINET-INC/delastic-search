@@ -9,9 +9,10 @@
     "lint": "next lint",
     "prepare-scripts": "chmod ug+x scripts/*",
     "seed": "dfx canister call delastic_search seed",
-    "get-index-size": "dfx canister call delastic_search returnIndexSize",
+    "get-index-size": "dfx canister call delastic_search size",
     "get-keys": "dfx canister call delastic_search keys",
-    "get-vals": "dfx canister call delastic_search vals"
+    "get-vals": "dfx canister call delastic_search vals",
+    "clean-index": "dfx canister install delastic_search --mode reinstall"
   },
   "dependencies": {
     "@dfinity/agent": "^0.15.6",

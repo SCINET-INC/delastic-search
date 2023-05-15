@@ -15,14 +15,24 @@ export type AttributeValuePrimitive = { 'int' : bigint } |
   { 'float' : number } |
   { 'bool' : boolean } |
   { 'text' : string };
+export interface QueryResponse {
+  'itemsRemaining' : bigint,
+  'nextLastIndex' : bigint,
+  'records' : Array<Record__1>,
+}
 export interface Record {
   'id' : string,
   'attributes' : RecordAttributes,
   'entityType' : string,
 }
 export type RecordAttributes = Array<[string, AttributeValue]>;
-export type Result = { 'ok' : Array<Record> } |
-  { 'err' : Array<Record> };
+export interface Record__1 {
+  'id' : string,
+  'attributes' : RecordAttributes,
+  'entityType' : string,
+}
+export type Result = { 'ok' : QueryResponse } |
+  { 'err' : QueryResponse };
 export interface _SERVICE {
   'queryIndex' : ActorMethod<[string, bigint, bigint, string], Result>,
   'removeRecord' : ActorMethod<[string, Array<string>], undefined>,

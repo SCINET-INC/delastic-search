@@ -9,7 +9,7 @@ import Types "../types";
 actor DelasticSearch {
   private var index = HM.StableHashMap<Text, [DS.Record]>(10, Text.equal, Text.hash);
 
-  public query func queryIndex(queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : async Result.Result<[DS.Record], [DS.Record]> {
+  public query func queryIndex(queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : async Result.Result<Types.QueryResponse, Types.QueryResponse> {
     let indexedRecords = DS.queryIndex(index, queryString, limit, lastIndex, entityType);
     return #ok(indexedRecords);
   };

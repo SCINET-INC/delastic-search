@@ -22,7 +22,7 @@ const initialSearchParams = {
 };
 
 export const Search = () => {
-  const [queryString, setQueryString] = useState<string>('tag');
+  const [queryString, setQueryString] = useState<string>('');
   const [searchParams, setSearchParams] = useState(initialSearchParams);
   const [cachedRecords, setCachedRecords] = useState<
     delastic_search_types.Record[]
@@ -39,58 +39,15 @@ export const Search = () => {
     [],
   );
 
-  // const seedDb = () => {
-  //   const maxRecords = 2;
-  //   const records = [];
-  //   const determineEntityType = (index: number) => {
-  //     if (index % 2 === 0) {
-  //       return 'organization';
-  //     }
-  //     return 'project';
-  //   };
-
-  //   const record = {
-  //     id: uuidv4(),
-  //     entityType: 'organization',
-  //     attributes: [],
-  //   };
-
-  //   searchActor?.updateIndex(record, []).then(async (updateRes: any) => {
-  //     console.log('**updateRes', updateRes);
-  //     // if ('ok' in updateRes) {
-  //     // } else {
-  //     //   console.error('failure', updateRes);
-  //     // }
-  //   });
-
-  //   // for (var i = 0; i < maxRecords; i++) {
-  //   //   const record = {
-  //   //     id: `${i}`,
-  //   //     entityType: determineEntityType(i),
-  //   //     attributes: [],
-  //   //   };
-
-  //   //   records.push(record);
-
-  //   //   console.log('**record', record);
-  //   //   searchActor?.updateIndex(record, []).then(async (updateRes: any) => {
-  //   //     console.log('**updateRes', updateRes);
-  //   //     // if ('ok' in updateRes) {
-  //   //     // } else {
-  //   //     //   console.error('failure', updateRes);
-  //   //     // }
-  //   //   });
-  //   // }
-  //   // return records;
-  // };
-
   useEffect(() => {
     if (debouncedQueryString) {
-      getResults(debouncedQueryString);
+      console.log('**debouncedQueryString', debouncedQueryString);
+      getResults();
     }
   }, [debouncedQueryString]);
 
-  const getResults = (debouncedQueryString: string) => {
+  const getResults = () => {
+    console.log('**getResults');
     const { limit, lastIndex } = searchParams;
     searchActor
       ?.queryIndex(
@@ -102,42 +59,28 @@ export const Search = () => {
       .then(async (queryRes: any) => {
         console.log('**queryRes', queryRes);
         if ('ok' in queryRes) {
-          setCachedRecords(queryRes['ok']);
+          setCachedRecords([...cachedRecords, ...queryRes['ok']]);
+          let nextLastIndex = 9;
+          if (lastIndex !== 0) {
+            nextLastIndex = lastIndex + 10;
+          }
+
+          setSearchParams({
+            limit: searchParams.limit,
+            lastIndex: nextLastIndex,
+          });
         } else {
           console.error('failure', queryRes);
         }
       });
   };
-
-  // const seed = () => {
-  //   const record: delastic_search_types.Record = {
-  //     id: uuidv4(),
-  //     entityType: 'organization',
-  //     attributes: [('tags', 'tags')],
-  //   };
-  //   searchActor?.updateIndex(record, []).then(async (updateRes: any) => {
-  //     console.log('**updateRes', updateRes);
-  //     // if ('ok' in updateRes) {
-  //     // } else {
-  //     //   console.error('failure', updateRes);
-  //     // }
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   seedDb();
-  // }, []);
-
-  // useEffect(() => {
-  //   getResults();
-  // }, []);
-  console.log('**queryString', queryString);
-  // const list = seedDb();
+  console.log('**cachedRecords', cachedRecords);
+  console.log('**searchParams', searchParams);
 
   return (
     <div>
-      {/* <button onClick={seed}>Seed</button> */}
       <input onChange={(e) => setQueryString(e.target.value)} />
+      <button onClick={getResults}>Next</button>
     </div>
   );
 };

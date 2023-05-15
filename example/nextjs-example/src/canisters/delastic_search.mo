@@ -8,6 +8,8 @@ import Debug "mo:base/Debug";
 
 import DS "../../../../src/ds";
 import Types "../../../../src/types";
+import Source "./utils/uuid/SourceV4";
+import UUID "./utils/uuid/UUID";
 
 actor DelasticSearch {
   // private var index = HM.StableHashMap<Text, [DS.Record]>(10, Text.equal, Text.hash);
@@ -24,7 +26,7 @@ actor DelasticSearch {
     recordList := [];
   };
 
-  public query func queryIndex(queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : async Result.Result<[DS.Record], [DS.Record]> {
+  public query func queryIndex(queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : async Result.Result<Types.QueryResponse, [Types.QueryResponse]> {
     Debug.print("**start of queryIndex1");
 
     let indexedRecords = DS.queryIndex(index, queryString, limit, lastIndex, entityType);
@@ -47,18 +49,26 @@ actor DelasticSearch {
   };
 
   public func seed() : async () {
-    var records = [{
-      id = "2";
-      entityType = "organization";
-      attributes = [("tags", #arrayText(["biology", "chemistry"]))];
-    }];
+    // var records = [{
+    //   id = "2";
+    //   entityType = "organization";
+    //   attributes = [("tags", #arrayText(["biology", "chemistry"]))];
+    // }];
 
-    for (record in records.vals()) {
+    for (i in Iter.range(0, 25)) {
+      let g = Source.Source();
+      let id : Text = UUID.toText(await g.new());
+      var record = {
+        id;
+        entityType = "organization";
+        attributes = [("tags", #arrayText(["biology", "chemistry"]))];
+      };
+
       await updateIndex(record, []);
     };
   };
 
-  public func size() : async (size : Nat) {
+  public query func size() : async (size : Nat) {
     return index.size();
   };
 

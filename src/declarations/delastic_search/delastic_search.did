@@ -1,7 +1,13 @@
 type Result = 
  variant {
-   err: vec Record;
-   ok: vec Record;
+   err: QueryResponse;
+   ok: QueryResponse;
+ };
+type Record__1 = 
+ record {
+   attributes: RecordAttributes;
+   entityType: text;
+   id: text;
  };
 type RecordAttributes = 
  vec record {
@@ -13,6 +19,12 @@ type Record =
    attributes: RecordAttributes;
    entityType: text;
    id: text;
+ };
+type QueryResponse = 
+ record {
+   itemsRemaining: nat;
+   nextLastIndex: nat;
+   records: vec Record__1;
  };
 type AttributeValuePrimitive = 
  variant {
