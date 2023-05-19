@@ -5,16 +5,14 @@ import {
 } from '@scinet-inc/delastic-search';
 import { HttpAgent } from '@dfinity/agent';
 import { useDebounce } from '@/hooks';
-const path = require('path');
-
-const canisters = require(path.resolve('../../local_canister_ids.json'));
 
 const agent = new HttpAgent({
   identity: undefined,
-  host: 'http://localhost:4943',
+  host: process.env.NEXT_PUBLIC_IC_HOST,
 });
 
-const DELASTIC_SEARCH_CANISTER_ID = canisters['delastic_search']['local'];
+const DELASTIC_SEARCH_CANISTER_ID =
+  process.env.NEXT_PUBLIC_DELASTIC_SEARCH_CANISTER_ID || '';
 
 const initialSearchParams = {
   limit: 10,
