@@ -7,10 +7,10 @@ import Nat "mo:base/Nat";
 import Prim "mo:prim";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
-import Debug "mo:base/Debug";
 import TrieMap "mo:base/TrieMap";
 import Types "./types";
 import Conversion "./conversion";
+import Debug "mo:base/Debug";
 
 module {
   public type AttributeValuePrimitive = Types.AttributeValuePrimitive;
@@ -45,19 +45,86 @@ module {
     } else { #greater };
   };
 
-  private func determineFinalFreqList(freqList : [Types.Record], limit : Nat, lastIndex : Nat) : [Record] {
-    let finalFreqBuffer = Buffer.Buffer<Record>(10);
-    var index = 0;
-
-    var upperBound : Nat = lastIndex + limit - 1;
-
-    for (i in Iter.range(lastIndex, upperBound)) {
-      finalFreqBuffer.add(freqList[i]);
+  private func determineItemsRemaining(totalItems : Nat, lastIndex : Nat, limit : Nat) : Nat {
+    if (lastIndex == 0) {
+      // there are more items than the limit
+      if (totalItems > limit) {
+        return totalItems - limit;
+      } else {
+        // return 0 because there are no items remaining and therefore no future requests to be made
+        return 0;
+      };
+    } else {
+      // not the first request
+      let indexPlusLimit = lastIndex + limit;
+      if (totalItems > indexPlusLimit) {
+        return totalItems - indexPlusLimit - 1;
+      } else {
+        return 0;
+      };
     };
-    return Buffer.toArray(finalFreqBuffer);
   };
 
-  private func retrieveRecords(index : Types.Index, tokens : [Text], limit : Nat, lastIndex : Nat, entityType : Text) : [Types.Record] {
+  private func determineNextLastIndex(lastIndex : Nat, limit : Nat, totalItems : Nat) : Nat {
+    // first request
+    if (lastIndex == 0) {
+      if (limit < totalItems) {
+        return limit - 1;
+      } else {
+        return totalItems -1;
+      };
+    } else {
+      // !first request
+      if (lastIndex + limit < totalItems) {
+        return lastIndex + limit;
+      } else {
+        return totalItems - 1;
+      };
+    };
+  };
+
+  private func determineUpperBound(lastIndex : Nat) : Nat {
+    if (lastIndex > 0) {
+      return lastIndex + 1;
+    };
+
+    return 0;
+  };
+
+  private func calculatePaginationParams(totalItems : Nat, lastIndex : Nat, limit : Nat) : Types.PaginationParams {
+    let itemsRemaining = determineItemsRemaining(totalItems : Nat, lastIndex : Nat, limit : Nat);
+
+    let nextLastIndex = determineNextLastIndex(lastIndex, limit, totalItems);
+
+    let upperBound = determineUpperBound(lastIndex);
+
+    return {
+      upperBound;
+      itemsRemaining;
+      nextLastIndex;
+    };
+  };
+
+  private func determineFinalFreqList(freqList : [Types.Record], limit : Nat, lastIndex : Nat) : Types.QueryResponse {
+    let finalFreqBuffer = Buffer.Buffer<Record>(10);
+    let listSize = freqList.size();
+
+    var paginationParams = calculatePaginationParams(listSize, lastIndex, limit);
+
+    for (i in Iter.range(paginationParams.upperBound, paginationParams.nextLastIndex)) {
+      finalFreqBuffer.add(freqList[i]);
+    };
+
+    let queryResponse : Types.QueryResponse = {
+      records = Buffer.toArray(finalFreqBuffer);
+      nextLastIndex = paginationParams.nextLastIndex;
+      itemsRemaining = paginationParams.itemsRemaining;
+    };
+
+    return queryResponse;
+  };
+
+  private func retrieveRecords(index : Types.Index, tokens : [Text], limit : Nat, lastIndex : Nat, entityType : Text) : Types.QueryResponse {
     // hash with the records associated with the search
     var recordMap = HashMap.HashMap<Text, Types.Record>(10, Text.equal, Text.hash);
 
@@ -145,7 +212,7 @@ module {
 
     // if there are no records, return an empty array
     if (frequencySize < 1) {
-      return [];
+      return { records = []; nextLastIndex = 0; itemsRemaining = 0 };
     } else if (frequencySize == 1) {
       // if there is one record, return it
       let frequencyPair = sortedFrequencies[0];
@@ -161,8 +228,8 @@ module {
       };
     };
 
-    let finalFreqList = determineFinalFreqList(Buffer.toArray(freqList), limit, lastIndex);
-    return finalFreqList;
+    let queryResponse = determineFinalFreqList(Buffer.toArray(freqList), limit, lastIndex);
+    return queryResponse;
   };
 
   private func chopTokens(tokens : [Text]) : [Text] {
@@ -187,22 +254,25 @@ module {
     return Buffer.toArray(bufferRecordsList);
   };
 
-  public func queryIndex(index : Types.Index, queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : [Types.Record] {
-
+  public func queryIndex(index : Types.Index, queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : Types.QueryResponse {
     // if the query string is empty then return nothing
     if (Text.size(queryString) == 0) {
-      return [];
+      return {
+        records = [];
+        itemsRemaining = 0;
+        nextLastIndex = 0;
+      };
     };
 
     // separate tokens/words from query string
     if (Text.contains(queryString, #char ' ')) {
       let tokens = Text.split(queryString, #char ' ');
-      let relevantRecords = retrieveRecords(index, Iter.toArray(tokens), limit, lastIndex, entityType);
-      return relevantRecords;
+      let queryResponse = retrieveRecords(index, Iter.toArray(tokens), limit, lastIndex, entityType);
+      return queryResponse;
     } else {
       // edge case for no spaces
-      let relevantRecords = retrieveRecords(index, [queryString], limit, lastIndex, entityType);
-      return relevantRecords;
+      let queryResponse = retrieveRecords(index, [queryString], limit, lastIndex, entityType);
+      return queryResponse;
     };
   };
 

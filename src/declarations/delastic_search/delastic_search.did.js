@@ -18,14 +18,21 @@ export const idlFactory = ({ IDL }) => {
     'arrayFloat' : IDL.Vec(IDL.Float64),
   });
   const RecordAttributes = IDL.Vec(IDL.Tuple(IDL.Text, AttributeValue));
-  const Record = IDL.Record({
+  const Record__1 = IDL.Record({
     'id' : IDL.Text,
     'attributes' : RecordAttributes,
     'entityType' : IDL.Text,
   });
-  const Result = IDL.Variant({
-    'ok' : IDL.Vec(Record),
-    'err' : IDL.Vec(Record),
+  const QueryResponse = IDL.Record({
+    'itemsRemaining' : IDL.Nat,
+    'nextLastIndex' : IDL.Nat,
+    'records' : IDL.Vec(Record__1),
+  });
+  const Result = IDL.Variant({ 'ok' : QueryResponse, 'err' : QueryResponse });
+  const Record = IDL.Record({
+    'id' : IDL.Text,
+    'attributes' : RecordAttributes,
+    'entityType' : IDL.Text,
   });
   return IDL.Service({
     'queryIndex' : IDL.Func(

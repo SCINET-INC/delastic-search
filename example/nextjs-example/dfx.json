@@ -1,0 +1,14 @@
+{
+	"canisters": {
+		"delastic_search": {
+			"main": "src/canisters/delastic_search.mo",
+			"type": "motoko"
+		}
+	},
+	"defaults": {
+		"build": {
+			"packtool": "vessel sources"
+		}
+	},
+	"version": 1
+}
