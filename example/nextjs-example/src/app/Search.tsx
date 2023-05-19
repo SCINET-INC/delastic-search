@@ -5,16 +5,17 @@ import {
 } from '@scinet-inc/delastic-search';
 import { HttpAgent } from '@dfinity/agent';
 import { useDebounce } from '@/hooks';
+const path = require('path');
+
+const canisters = require(path.resolve('../../local_canister_ids.json'));
 
 const agent = new HttpAgent({
   identity: undefined,
   host: 'http://localhost:4943',
 });
 
-// const DELASTIC_SEARCH_CANISTER_ID = process.env.DELASTIC_SEARCH_CANISTER_ID;
-const DELASTIC_SEARCH_CANISTER_ID = 'wzp7w-lyaaa-aaaaa-aaara-cai';
+const DELASTIC_SEARCH_CANISTER_ID = canisters['delastic_search']['local'];
 
-console.log('**DELASTIC_SEARCH_CANISTER_ID', DELASTIC_SEARCH_CANISTER_ID);
 const initialSearchParams = {
   limit: 10,
   lastIndex: 0,
@@ -41,7 +42,6 @@ export const Search = () => {
 
   useEffect(() => {
     if (debouncedQueryString) {
-      console.log('**debouncedQueryString', debouncedQueryString);
       getResults();
     }
   }, [debouncedQueryString]);
@@ -78,6 +78,9 @@ export const Search = () => {
     <div>
       <input onChange={(e) => setQueryString(e.target.value)} />
       <button onClick={getResults}>Next</button>
+      {cachedRecords.map((r: any, i: number) => (
+        <div key={i}>{r.id}</div>
+      ))}
     </div>
   );
 };

@@ -83,12 +83,23 @@ module {
     };
   };
 
+  private func determineUpperBound(lastIndex : Nat) : Nat {
+    if (lastIndex > 0) {
+      return lastIndex + 1;
+    };
+
+    return 0;
+  };
+
   private func calculatePaginationParams(totalItems : Nat, lastIndex : Nat, limit : Nat) : Types.PaginationParams {
     let itemsRemaining = determineItemsRemaining(totalItems : Nat, lastIndex : Nat, limit : Nat);
 
     let nextLastIndex = determineNextLastIndex(lastIndex, limit, totalItems);
 
+    let upperBound = determineUpperBound(lastIndex);
+
     return {
+      upperBound;
       itemsRemaining;
       nextLastIndex;
     };
@@ -100,7 +111,7 @@ module {
 
     var paginationParams = calculatePaginationParams(listSize, lastIndex, limit);
 
-    for (i in Iter.range(lastIndex + 1, paginationParams.nextLastIndex)) {
+    for (i in Iter.range(paginationParams.upperBound, paginationParams.nextLastIndex)) {
       finalFreqBuffer.add(freqList[i]);
     };
 
