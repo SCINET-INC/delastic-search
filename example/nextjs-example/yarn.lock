@@ -255,10 +255,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.2.0.tgz#8be36a1f66f3265389e90b5f9c9962146758f728"
   integrity sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg==
 
-"@scinet-inc/delastic-search@0.5.1-test-1":
-  version "0.5.1-test-1"
-  resolved "https://npm.pkg.github.com/download/@scinet-inc/delastic-search/0.5.1-test-1/78adc121232708a877259e31cca016ed774b886e#78adc121232708a877259e31cca016ed774b886e"
-  integrity sha512-i2TaOIHm6zD1yLdaEa+KO+vVkDZCj70RVu6O2gALwfVzfX8Ejd1czFWyWGIlScTgUwquSiMJjSXuWrTkFfS+3w==
+"@scinet-inc/delastic-search@0.5.1-test-3":
+  version "0.5.1-test-3"
+  resolved "https://npm.pkg.github.com/download/@scinet-inc/delastic-search/0.5.1-test-3/a27c21eb0938d960a7f9e43cef77fae243ffade1#a27c21eb0938d960a7f9e43cef77fae243ffade1"
+  integrity sha512-oSpyQtCXwpgBItKbdTWO/DIsi2KWpRisRWvkxMLHIDATKWky4nfWPgh9lKYfIkujp7pO5gJFamv96rbJ0AFz+A==
   dependencies:
     "@dfinity/agent" "^0.13.3"
     "@dfinity/candid" "^0.13.3"

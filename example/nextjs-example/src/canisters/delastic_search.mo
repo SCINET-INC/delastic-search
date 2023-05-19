@@ -2,7 +2,6 @@ import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
-// import HM "mo:StableHashMap/ClassStableHashMap";
 import TrieMap "mo:base/TrieMap";
 import Debug "mo:base/Debug";
 
@@ -12,8 +11,6 @@ import Source "./utils/uuid/SourceV4";
 import UUID "./utils/uuid/UUID";
 
 actor DelasticSearch {
-  // private var index = HM.StableHashMap<Text, [DS.Record]>(10, Text.equal, Text.hash);
-
   private stable var recordList : [(Text, [DS.Record])] = [];
   private var index = TrieMap.fromEntries<Text, [DS.Record]>(Iter.fromArray(recordList), Text.equal, Text.hash);
 
@@ -32,7 +29,6 @@ actor DelasticSearch {
   };
 
   public func updateIndex(record : DS.Record, oldIndexKeys : [Text]) : async () {
-    Debug.print("**start of updateIndex");
     DS.updateIndex(index, record, oldIndexKeys);
   };
 

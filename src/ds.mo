@@ -7,10 +7,10 @@ import Nat "mo:base/Nat";
 import Prim "mo:prim";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
-import Debug "mo:base/Debug";
 import TrieMap "mo:base/TrieMap";
 import Types "./types";
 import Conversion "./conversion";
+import Debug "mo:base/Debug";
 
 module {
   public type AttributeValuePrimitive = Types.AttributeValuePrimitive;
@@ -58,95 +58,51 @@ module {
       // not the first request
       let indexPlusLimit = lastIndex + limit;
       if (totalItems > indexPlusLimit) {
-        return totalItems - indexPlusLimit + 1;
-        //    if (lastIndex > limit) {
-        //   let indexLimitDiff = lastIndex - limit;
-        //   if (totalItems > indexLimitDiff) {
-        //     return totalItems - indexLimitDiff - 1;
-        //   } else {
-        //     return 0;
-        //   };
-        // }
+        return totalItems - indexPlusLimit - 1;
       } else {
         return 0;
       };
     };
   };
 
-  private func determineNextLastIndex(lastIndex : Nat, limit : Nat, itemsRemaining : Nat) : Nat {
+  private func determineNextLastIndex(lastIndex : Nat, limit : Nat, totalItems : Nat) : Nat {
     // first request
     if (lastIndex == 0) {
-      if (limit < itemsRemaining) {
-        // there are more requests to make after this one
+      if (limit < totalItems) {
         return limit - 1;
       } else {
-        // this is the only request
-        return lastIndex + itemsRemaining - 1;
+        return totalItems -1;
       };
     } else {
-      Debug.print("determineNextLastIndex not first request");
-      Debug.print(Nat.toText(itemsRemaining));
-      Debug.print(Nat.toText(lastIndex));
-      Debug.print("first if statement result");
-
       // !first request
-      if (limit < itemsRemaining) {
-        // there are more requests to make
-        return limit + lastIndex;
+      if (lastIndex + limit < totalItems) {
+        return lastIndex + limit;
       } else {
-        // this is the last request to make
-        return lastIndex + itemsRemaining;
+        return totalItems - 1;
       };
     };
   };
 
   private func calculatePaginationParams(totalItems : Nat, lastIndex : Nat, limit : Nat) : Types.PaginationParams {
-    Debug.print("totalItems");
-    Debug.print(Nat.toText(totalItems));
-
-    Debug.print("limit");
-    Debug.print(Nat.toText(limit));
-
-    Debug.print("lastIndex");
-    Debug.print(Nat.toText(lastIndex));
-    // TODO: rework this, the -1 is wrong for the !first call
     let itemsRemaining = determineItemsRemaining(totalItems : Nat, lastIndex : Nat, limit : Nat);
-    Debug.print("itemsRemaining");
-    Debug.print(Nat.toText(itemsRemaining));
-    let nextLastIndex = determineNextLastIndex(lastIndex, limit, itemsRemaining);
-    Debug.print("nextLastIndex");
-    Debug.print(Nat.toText(nextLastIndex));
 
-    if (itemsRemaining > limit) {
-      return {
-        upperBound = limit + lastIndex -1;
-        itemsRemaining;
-        nextLastIndex;
-      };
-    } else {
-      return {
-        upperBound = totalItems - 1;
-        itemsRemaining;
-        nextLastIndex;
-      };
+    let nextLastIndex = determineNextLastIndex(lastIndex, limit, totalItems);
+
+    return {
+      itemsRemaining;
+      nextLastIndex;
     };
   };
 
   private func determineFinalFreqList(freqList : [Types.Record], limit : Nat, lastIndex : Nat) : Types.QueryResponse {
     let finalFreqBuffer = Buffer.Buffer<Record>(10);
-    var index = 0;
     let listSize = freqList.size();
-    let remainingItems = listSize - lastIndex - 1;
 
     var paginationParams = calculatePaginationParams(listSize, lastIndex, limit);
-    Debug.print("**upperBound");
-    Debug.print(Nat.toText(paginationParams.upperBound));
 
-    for (i in Iter.range(lastIndex, paginationParams.upperBound)) {
+    for (i in Iter.range(lastIndex + 1, paginationParams.nextLastIndex)) {
       finalFreqBuffer.add(freqList[i]);
     };
-    Debug.print("**end of determineFinalFreqList, with size");
-    Debug.print(Nat.toText(finalFreqBuffer.size()));
 
     let queryResponse : Types.QueryResponse = {
       records = Buffer.toArray(finalFreqBuffer);

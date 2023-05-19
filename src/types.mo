@@ -51,7 +51,6 @@ module {
   };
 
   public type PaginationParams = {
-    upperBound : Nat;
     itemsRemaining : Nat;
     nextLastIndex : Nat;
   };
