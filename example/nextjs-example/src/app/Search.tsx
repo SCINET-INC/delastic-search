@@ -4,7 +4,6 @@ import {
   delastic_search_types,
 } from '@scinet-inc/delastic-search';
 import { HttpAgent } from '@dfinity/agent';
-import { v4 as uuidv4 } from 'uuid';
 import { useDebounce } from '@/hooks';
 
 const agent = new HttpAgent({
@@ -19,6 +18,7 @@ console.log('**DELASTIC_SEARCH_CANISTER_ID', DELASTIC_SEARCH_CANISTER_ID);
 const initialSearchParams = {
   limit: 10,
   lastIndex: 0,
+  itemsRemaining: undefined,
 };
 
 export const Search = () => {
@@ -48,26 +48,23 @@ export const Search = () => {
 
   const getResults = () => {
     console.log('**getResults');
-    const { limit, lastIndex } = searchParams;
+    const { limit, lastIndex, itemsRemaining } = searchParams;
+    if (itemsRemaining !== undefined && itemsRemaining === 0) {
+      return;
+    }
+
     searchActor
-      ?.queryIndex(
-        debouncedQueryString,
-        BigInt(limit),
-        BigInt(lastIndex),
-        'all',
-      )
+      ?.queryIndex(debouncedQueryString, limit, lastIndex, 'all')
       .then(async (queryRes: any) => {
         console.log('**queryRes', queryRes);
         if ('ok' in queryRes) {
-          setCachedRecords([...cachedRecords, ...queryRes['ok']]);
-          let nextLastIndex = 9;
-          if (lastIndex !== 0) {
-            nextLastIndex = lastIndex + 10;
-          }
+          const { records, nextLastIndex, itemsRemaining } = queryRes['ok'];
+          setCachedRecords([...cachedRecords, ...records]);
 
           setSearchParams({
             limit: searchParams.limit,
             lastIndex: nextLastIndex,
+            itemsRemaining,
           });
         } else {
           console.error('failure', queryRes);

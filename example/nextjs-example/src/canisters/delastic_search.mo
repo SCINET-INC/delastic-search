@@ -27,12 +27,8 @@ actor DelasticSearch {
   };
 
   public query func queryIndex(queryString : Text, limit : Nat, lastIndex : Nat, entityType : Text) : async Result.Result<Types.QueryResponse, [Types.QueryResponse]> {
-    Debug.print("**start of queryIndex1");
-
-    let indexedRecords = DS.queryIndex(index, queryString, limit, lastIndex, entityType);
-    Debug.print("**end of queryIndex");
-
-    return #ok(indexedRecords);
+    let queryResponse = DS.queryIndex(index, queryString, limit, lastIndex, entityType);
+    return #ok(queryResponse);
   };
 
   public func updateIndex(record : DS.Record, oldIndexKeys : [Text]) : async () {

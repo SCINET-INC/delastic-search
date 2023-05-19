@@ -45,21 +45,62 @@ module {
     } else { #greater };
   };
 
-  // private func determineUpperBound(lastIndex : Nat, limit : Nat, listSize : Nat) : Nat {
-  //   // lastIndex = 9, limit = 10, listSize = 12
-  //   // need to return 11
-  //   if (limit - listSize > 0) {
-  //     return limit;
-  //   };
+  private func determineItemsRemaining(totalItems : Nat, lastIndex : Nat, limit : Nat) : Nat {
+    if (lastIndex == 0) {
+      // there are more items than the limit
+      if (totalItems > limit) {
+        return totalItems - limit;
+      } else {
+        // return 0 because there are no items remaining and therefore no future requests to be made
+        return 0;
+      };
+    } else {
+      // not the first request
+      let indexPlusLimit = lastIndex + limit;
+      if (totalItems > indexPlusLimit) {
+        return totalItems - indexPlusLimit + 1;
+        //    if (lastIndex > limit) {
+        //   let indexLimitDiff = lastIndex - limit;
+        //   if (totalItems > indexLimitDiff) {
+        //     return totalItems - indexLimitDiff - 1;
+        //   } else {
+        //     return 0;
+        //   };
+        // }
+      } else {
+        return 0;
+      };
+    };
+  };
 
-  //   return lastIndex + limit - 1;
-  //   // example: there are 2 records
-  //   // then the upperBound needs to be lastIndex + 1
-  //   // example: there are
-  //   // if the listSize is smaller than the limit, then the upperbound need to be lastIndex
-  // };
+  private func determineNextLastIndex(lastIndex : Nat, limit : Nat, itemsRemaining : Nat) : Nat {
+    // first request
+    if (lastIndex == 0) {
+      if (limit < itemsRemaining) {
+        // there are more requests to make after this one
+        return limit - 1;
+      } else {
+        // this is the only request
+        return lastIndex + itemsRemaining - 1;
+      };
+    } else {
+      Debug.print("determineNextLastIndex not first request");
+      Debug.print(Nat.toText(itemsRemaining));
+      Debug.print(Nat.toText(lastIndex));
+      Debug.print("first if statement result");
 
-  public func calculatePaginationParams(totalItems : Nat, lastIndex : Nat, limit : Nat) : Types.PaginationParams {
+      // !first request
+      if (limit < itemsRemaining) {
+        // there are more requests to make
+        return limit + lastIndex;
+      } else {
+        // this is the last request to make
+        return lastIndex + itemsRemaining;
+      };
+    };
+  };
+
+  private func calculatePaginationParams(totalItems : Nat, lastIndex : Nat, limit : Nat) : Types.PaginationParams {
     Debug.print("totalItems");
     Debug.print(Nat.toText(totalItems));
 
@@ -68,33 +109,25 @@ module {
 
     Debug.print("lastIndex");
     Debug.print(Nat.toText(lastIndex));
-    let itemsRemaining = totalItems - lastIndex - 1;
+    // TODO: rework this, the -1 is wrong for the !first call
+    let itemsRemaining = determineItemsRemaining(totalItems : Nat, lastIndex : Nat, limit : Nat);
+    Debug.print("itemsRemaining");
+    Debug.print(Nat.toText(itemsRemaining));
+    let nextLastIndex = determineNextLastIndex(lastIndex, limit, itemsRemaining);
+    Debug.print("nextLastIndex");
+    Debug.print(Nat.toText(nextLastIndex));
 
-    if (totalItems <= limit) {
-      Debug.print("totalItems <= limit");
+    if (itemsRemaining > limit) {
+      return {
+        upperBound = limit + lastIndex -1;
+        itemsRemaining;
+        nextLastIndex;
+      };
+    } else {
       return {
         upperBound = totalItems - 1;
         itemsRemaining;
-        nextLastIndex = 0;
-      };
-    } else {
-      if (itemsRemaining <= limit) {
-        Debug.print("remainingItems <= limit");
-
-        return {
-          upperBound = lastIndex + itemsRemaining;
-          itemsRemaining;
-          nextLastIndex = 0;
-        };
-      } else {
-        Debug.print("Infinite loop error: Not enough remaining items in the total range");
-        // You can throw an error or handle the infinite loop scenario as per your requirement
-        // Here, I'm returning lastIndex as a default value, but you can modify this accordingly.
-        return {
-          upperBound = lastIndex + limit - 1;
-          itemsRemaining;
-          nextLastIndex = 0;
-        };
+        nextLastIndex;
       };
     };
   };
