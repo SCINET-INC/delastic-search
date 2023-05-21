@@ -20,6 +20,7 @@ module {
   public type AttributeValue = Types.AttributeValue;
   public type RecordAttributes = Types.RecordAttributes;
   public type Record = Types.Record;
+  public type QueryResponse = Types.QueryResponse;
   public type Index = Types.Index;
   type RecordList = Types.RecordList;
   type FrequencyPair = Types.FrequencyPair;
